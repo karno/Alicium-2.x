@@ -16,7 +16,7 @@ namespace Alicium2
 {
 	public partial class Main : Form
 	{
-        int version = 1000;
+		int version = 1000;
 		public ExtendedOAuthTokens[] NowTokens
 		{
 			get
@@ -25,9 +25,9 @@ namespace Alicium2
 			}
 		}
 		TwitterDo twitterDo;
-		public List<Column> Columns = new List<Column>();
-		public Column ActiveColumn;
-		public TwitterStatus ActiveStatus;
+		public static List<Column> Columns = new List<Column>();
+		public static Column ActiveColumn;
+		public static TwitterStatus ActiveStatus;
 		public Dictionary<string, ExtendedOAuthTokens> Accounts = new Dictionary<string, ExtendedOAuthTokens>();
 		int CommandCount = 0;
 		string Command = "";
@@ -37,31 +37,32 @@ namespace Alicium2
 			InitializeComponent();
 			Try(new Action(() =>
 			               {
-                               if (version < CheckLatestVersion())
-                               {
-                                   MessageBox.Show("There is an update.");
-                               }
+			               	if (version < CheckLatestVersion())
+			               	{
+			               		MessageBox.Show("There is an update.");
+			               	}
 			               	Accounts = AccountReader.Read("Settings/Accounts.dat");
-                            if (Accounts.Count != 0)
-                            {
-                                AccountsList.Items.AddRange(Accounts.Keys.ToArray());
-                            }
-                            else
-                            {
-                                MessageBox.Show("Accounts not found.Let's authenticate your first account.");
-                                AccountManager m = new AccountManager(Accounts);
-                                m.ShowDialog();
-                                if (m.Change)
-                                {
-                                    Accounts.Clear();
-                                    AccountsList.Items.Clear();
-                                    Accounts = AccountReader.Read("Settings/Accounts.dat");
-                                    if (Accounts.Count != 0)
-                                    {
-                                        AccountsList.Items.AddRange(Accounts.Keys.ToArray());
-                                    }
-                                }
-                            }
+			               	if (Accounts.Count != 0)
+			               	{
+			               		AccountsList.Items.AddRange(Accounts.Keys.ToArray());
+			               	}
+			               	else
+			               	{
+			               		MessageBox.Show("Accounts not found.Let's authenticate your first account.");
+			               		AccountManager m = new AccountManager(Accounts);
+			               		m.ShowDialog();
+			               		if (m.Change)
+			               		{
+			               			Accounts.Clear();
+			               			AccountsList.Items.Clear();
+			               			Accounts = AccountReader.Read("Settings/Accounts.dat");
+			               			if (Accounts.Count != 0)
+			               			{
+			               				AccountsList.Items.AddRange(Accounts.Keys.ToArray());
+			               				AccountsList.SelectedIndex = 0;
+			               			}
+			               		}
+			               	}
 			               	var f = ColumnReader.Load(this);
 			               	for (int i = 0; i < f.Length; i++)
 			               	{
@@ -129,14 +130,14 @@ namespace Alicium2
 				r.MdiParent = this;
 				r.Show();
 				r.Size = new Size(240, this.Size.Height - 160);
-                if (Columns.Count > 0)
-                {
-                    r.Text = (int.Parse(Columns[Columns.Count - 1].Text[0].ToString()) + 1) + ": " + r.Text;
-                }
-                else
-                {
-                    r.Text = 0 + ": " + r.Text;
-                }
+				if (Columns.Count > 0)
+				{
+					r.Text = (int.Parse(Columns[Columns.Count - 1].Text[0].ToString()) + 1) + ": " + r.Text;
+				}
+				else
+				{
+					r.Text = 0 + ": " + r.Text;
+				}
 				Columns.Add(r);
 			}
 		}
@@ -151,8 +152,8 @@ namespace Alicium2
 				}
 				else
 				{
-					Columns[i].Location = new Point(240 * i,Columns[i].Fresh ? 0 : 27);
-					Columns[i].Size = new Size(240, this.Size.Height - 160);
+					Columns[i].Location = new Point(360 * i,Columns[i].Fresh ? 0 : 27);
+					Columns[i].Size = new Size(360, this.Size.Height - 170);
 					if (ActiveColumn == null || ActiveColumn != Columns[i]) Columns[i].Active = false;
 				}
 			}
@@ -208,30 +209,37 @@ null";
 			{
 				if (e.Control && e.KeyCode == Keys.Enter)
 				{
-					if (ActiveStatus == null)
+					if (AccountsList.SelectedItems.Count != 0)
 					{
-						twitterDo.Post(PostText.Text,NowTokens);
-						PostText.Text = "";
+						if (ActiveStatus == null)
+						{
+							twitterDo.Post(PostText.Text, NowTokens);
+							PostText.Text = "";
+						}
+						else
+						{
+							twitterDo.Post(PostText.Text, ActiveStatus, NowTokens);
+							PostText.Text = "";
+						}
+						Tweeted = true;
 					}
 					else
 					{
-                        twitterDo.Post(PostText.Text, ActiveStatus, NowTokens);
-						PostText.Text = "";
+						MConsole.WriteLine("You haven't selected any accounts.");
 					}
-					Tweeted = true;
 				}
 				else if (e.Control && e.KeyCode == Keys.F)
 				{
 					if (ActiveStatus != null)
 					{
-                        twitterDo.Favorite(ActiveStatus, NowTokens);
+						twitterDo.Favorite(ActiveStatus, NowTokens);
 					}
 				}
 				else if (e.Control && e.KeyCode == Keys.R)
 				{
 					if (ActiveStatus != null)
 					{
-                        twitterDo.Retweet(ActiveStatus, NowTokens);
+						twitterDo.Retweet(ActiveStatus, NowTokens);
 					}
 				}
 				else if (e.Control && e.KeyCode == Keys.C)
@@ -239,7 +247,7 @@ null";
 					IsCommandMode = true;
 					PostText.Text = @"Command Mode
 ";
-                    MConsole.WriteLine(ActiveColumn == null ? "c[Number] ... Activate the [Number]th column" : " [Number] ... Activate the [Number]th Tweet from Column that is activated");
+					MConsole.WriteLine(ActiveColumn == null ? "c[Number] ... Activate the [Number]th column" : " [Number] ... Activate the [Number]th Tweet from Column that is activated");
 					PostText.ReadOnly = true;
 				}
 				else if (e.KeyCode == Keys.Delete)
@@ -271,7 +279,7 @@ null";
 				{
 					try
 					{
-						ActiveStatus = ActiveColumn[o];
+						ActivateStatus(o);
 						IsCommandMode = false;
 						PostText.ReadOnly = false;
 						CommandCount = 0;
@@ -308,19 +316,26 @@ null";
 			{
 				if ((Command[0] == 'c' || Command[0] == 'C') && int.TryParse(Command[1].ToString(), out o))
 				{
-                    try
-                    {
-                        ActiveColumn = Columns[int.Parse(Command[1].ToString())];
-                        Columns[int.Parse(Command[1].ToString())].Active = true;
-                        IsCommandMode = false;
-                        PostText.ReadOnly = false;
-                        CommandCount = 0;
-                        MConsole.WriteLine("Ready");
-                        Command = "";
-                        PostText.Text = "";
-                        CommandHandled = true;
-                    }
-                    catch { }
+					try
+					{
+						ActivateColumn(int.Parse(Command[1].ToString()));
+						IsCommandMode = false;
+						PostText.ReadOnly = false;
+						CommandCount = 0;
+						MConsole.WriteLine("Ready");
+						Command = "";
+						PostText.Text = "";
+						CommandHandled = true;
+					}
+					catch
+					{
+						IsCommandMode = false;
+						PostText.ReadOnly = false;
+						CommandCount = 0;
+						MConsole.WriteLine("Ready");
+						Command = "";
+						PostText.Text = "";
+					}
 				}
 				else
 				{
@@ -332,6 +347,15 @@ null";
 					PostText.Text = "";
 				}
 			}
+		}
+		public static void ActivateStatus(int index)
+		{
+			ActiveStatus = ActiveColumn[index];
+		}
+		public static void ActivateColumn(int index)
+		{
+			ActiveColumn = Columns[index];
+			Columns[index].Active = true;
 		}
 		private void Status_Click(object sender, EventArgs e)
 		{
@@ -358,18 +382,18 @@ null";
 
 		private void accountsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-            AccountManager m = new AccountManager(Accounts);
-            m.ShowDialog();
-            if (m.Change)
-            {
-                Accounts.Clear();
-                AccountsList.Items.Clear();
-                Accounts = AccountReader.Read("Settings/Accounts.dat");
-                if (Accounts.Count != 0)
-                {
-                    AccountsList.Items.AddRange(Accounts.Keys.ToArray());
-                }
-            }
+			AccountManager m = new AccountManager(Accounts);
+			m.ShowDialog();
+			if (m.Change)
+			{
+				Accounts.Clear();
+				AccountsList.Items.Clear();
+				Accounts = AccountReader.Read("Settings/Accounts.dat");
+				if (Accounts.Count != 0)
+				{
+					AccountsList.Items.AddRange(Accounts.Keys.ToArray());
+				}
+			}
 		}
 
 		

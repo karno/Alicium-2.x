@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.IO;
 using System.Windows.Forms;
 using Twitterizer;
 using Twitterizer.Streaming;
@@ -29,18 +30,16 @@ namespace Alicium2
 		public Column(TwitterStream stream, StartType s, string title)
 		{
 			InitializeComponent();
+            listView1.SmallImageList = new ImageList();
 			ts = stream;
 			if (s == StartType.UserStream)
 			{
-				ts.StartUserStream(null, new StreamStoppedCallback((x) => { MessageBox.Show("Stopped."); }), new StatusCreatedCallback(x => { Add(x); }), null, null, null, new EventCallback(x => { Event(x); }), null);
+                ts.StartUserStream(null, new StreamStoppedCallback((x) => { toolStripStatusLabel1.Text = "Stopped."; }), new StatusCreatedCallback(x => { Add(x); }), null, null, null, new EventCallback(x => { Event(x); }), null);
 				var tt = TwitterTimeline.HomeTimeline(stream.Tokens);
 				try
 				{
 					foreach (var tss in tt.ResponseObject)
 					{
-						textBox1.Text += tss.User.ScreenName + ": " + tss.Text + @"
-
-";
 						timeline.Add(tss);
 					}
 				}
@@ -60,15 +59,12 @@ namespace Alicium2
                     }
                     query = query.Remove(query.Length - 5, 5);
                 }
-				ts.StartPublicStream(new StreamStoppedCallback((x) => { MessageBox.Show("Stopped."); }), new StatusCreatedCallback(x => { Add(x); }), null, new EventCallback(x => { Event(x); }));
+                ts.StartPublicStream(new StreamStoppedCallback((x) => { toolStripStatusLabel1.Text = "Stopped."; }), new StatusCreatedCallback(x => { Add(x); }), null, new EventCallback(x => { Event(x); }));
 				var tt = TwitterSearch.Search(ts.Tokens, query, new SearchOptions() { ResultType = SearchOptionsResultType.Popular });
 				try
 				{
 					foreach (var tss in tt.ResponseObject)
 					{
-						textBox1.Text += tss.FromUserScreenName + ": " + tss.Text + @"
-
-";
 						timeline.Add(new TwitterStatus() { Text = tss.Text, User = new TwitterUser() { ScreenName = tss.FromUserScreenName } });
 					}
 				}
@@ -80,15 +76,12 @@ namespace Alicium2
 			else if (s == StartType.Mentions)
 			{
 				ts.StreamOptions.Track.Add("@" + ExtendedOAuthTokens.Tokens.First<ExtendedOAuthTokens>((x) => { return x.OAuthTokens == ts.Tokens; }).UserName);
-				ts.StartPublicStream(new StreamStoppedCallback((x) => { MessageBox.Show("Stopped."); }), new StatusCreatedCallback(x => { Add(x); }), null, new EventCallback(x => { Event(x); }));
+                ts.StartPublicStream(new StreamStoppedCallback((x) => { toolStripStatusLabel1.Text = "Stopped."; }), new StatusCreatedCallback(x => { Add(x); }), null, new EventCallback(x => { Event(x); }));
 				var tt = TwitterTimeline.Mentions(stream.Tokens);
 				try
 				{
 					foreach (var tss in tt.ResponseObject)
 					{
-						textBox1.Text += tss.User.ScreenName + ": " + tss.Text + @"
-
-";
 						timeline.Add(tss);
 					}
 				}
@@ -100,6 +93,7 @@ namespace Alicium2
 			st = s;
 			this.Text = title;
 			Columns.Add(this);
+            ShowF();
 		}
 		~Column()
 		{
@@ -122,11 +116,11 @@ namespace Alicium2
 				active = value;
 				if (!active)
 				{
-					textBox1.BackColor = Color.WhiteSmoke;
+				    listView1.BackColor = Color.WhiteSmoke;
 				}
 				else
 				{
-					textBox1.BackColor = Color.Azure;
+                    listView1.BackColor = Color.Azure;
 				}
 			}
 		}
@@ -140,25 +134,10 @@ namespace Alicium2
 			{
 				if (timeline.Count > 0)
 				{
-					TwitterStatus[] array = this.timeline.ToArray();
-					Array.Reverse(array);
-					Queue<TwitterStatus> queue = new Queue<TwitterStatus>();
-					TwitterStatus[] array2 = array;
-					for (int i = 0; i < array2.Length; i++)
-					{
-						TwitterStatus item = array2[i];
-						queue.Enqueue(item);
-					}
-					queue.Dequeue();
-					queue.Enqueue(t);
-					TwitterStatus[] array3 = queue.ToArray();
-					Array.Reverse(array3);
-					this.timeline.Clear();
-					array2 = array3;
-					for (int i = 0; i < array2.Length; i++)
-					{
-						this.timeline.Add(array2[i]);
-					}
+                    var rev = timeline.ToArray().Reverse().ToList();
+                    rev.Add(t);
+                    rev.Reverse();
+                    timeline = rev;
 				}
 				else
 				{
@@ -168,6 +147,70 @@ namespace Alicium2
 			}
 			catch{}
 		}
+        public void Renew()
+        {
+            Main.Try(new Action(() =>
+            {
+                if (st == StartType.UserStream)
+                {
+                    timeline.Clear();
+                    var tt = TwitterTimeline.HomeTimeline(ts.Tokens);
+                    try
+                    {
+                        foreach (var tss in tt.ResponseObject)
+                        {
+                            timeline.Add(tss);
+                        }
+                    }
+                    catch
+                    {
+                        MessageBox.Show(tt.ErrorMessage);
+                    }
+                }
+                else if (st == StartType.FilterStream)
+                {
+                    string query = "";
+                    if (ts.StreamOptions.Track.Count != 0)
+                    {
+                        foreach (string ss in ts.StreamOptions.Track)
+                        {
+                            query += ss + "+AND+";
+                        }
+                        query = query.Remove(query.Length - 5, 5);
+                    }
+                    timeline.Clear();
+                    var tt = TwitterSearch.Search(ts.Tokens, query, new SearchOptions() { ResultType = SearchOptionsResultType.Popular });
+                    try
+                    {
+                        foreach (var tss in tt.ResponseObject)
+                        {
+                            timeline.Add(new TwitterStatus() { Text = tss.Text, User = new TwitterUser() { ScreenName = tss.FromUserScreenName } });
+                        }
+                    }
+                    catch
+                    {
+                        MessageBox.Show(tt.ErrorMessage);
+                    }
+                }
+                else if (st == StartType.Mentions)
+                {
+                    timeline.Clear();
+                    var tt = TwitterTimeline.Mentions(ts.Tokens);
+                    try
+                    {
+                        foreach (var tss in tt.ResponseObject)
+                        {
+                            timeline.Add(tss);
+                        }
+                    }
+                    catch
+                    {
+                        MessageBox.Show(tt.ErrorMessage);
+                    }
+                }
+                ShowF();
+            }));
+        }
 		void Event(TwitterStreamEvent e)
 		{
 			if(this.st == StartType.UserStream)
@@ -177,47 +220,60 @@ namespace Alicium2
 					case "Favorite":
 						if(ExtendedOAuthTokens.Tokens.Any((x) => {return x.UserName == e.Target.ScreenName;}))
 						{
-							MConsole.WriteLine(e.Source.ScreenName + " Favorited your tweet [" + ((TwitterStatus)e.TargetObject).User.ScreenName + ": " + ((TwitterStatus)e.TargetObject).Text + "]");
+                            MConsole.WriteLine(e.Source.ScreenName + " Favorited your tweet.");
 						}
 						break;
 					case "Retweet":
 						if(ExtendedOAuthTokens.Tokens.Any((x) => {return x.UserName == e.Target.ScreenName;}))
 						{
-							MConsole.WriteLine(e.Source.ScreenName + " Retweeted your tweet [" + ((TwitterStatus)e.TargetObject).User.ScreenName + ": " + ((TwitterStatus)e.TargetObject).Text + "]");
+                            MConsole.WriteLine(e.Source.ScreenName + " Retweeted your tweet.");
 						}
 						break;
 					case "Follow":
 						if(ExtendedOAuthTokens.Tokens.Any((x) => {return x.UserName == e.Target.ScreenName;}))
 						{
-							MConsole.WriteLine(e.Source.ScreenName + " Followed you [" + e.Target.ScreenName + "]");
+							MConsole.WriteLine(e.Source.ScreenName + " Followed you.");
 						}
 						break;
 				}
 			}
 		}
-		string ShowData = "";
+        public List<ListViewItem> ShowData = new List<ListViewItem>();
 		bool RenewedFlag = false;
-		void ShowF()
-		{
-			ShowData = "";
-			var thread = new Thread(new ThreadStart(() =>
-			                                        {
-			                                        	foreach (TwitterStatus t in timeline)
-			                                        	{
-			                                        		ShowData += t.User.ScreenName + ":" + t.Text + @"
-
-";
-			                                        	}
-			                                        	RenewedFlag = true;
-			                                        }));
-			thread.Start();
-		}
+        void ShowF()
+        {
+            var th = new Thread(new ThreadStart(() =>
+            {
+                ShowData.Clear();
+                for(int i = 0;i < timeline.Count;i++)
+                {
+                    if (listView1.SmallImageList != null && !listView1.SmallImageList.Images.ContainsKey(timeline[i].User.ScreenName))
+                    {
+                        string uri = timeline[i].User.ProfileImageLocation;
+                        WebClient wc = new WebClient();
+                        Stream stream = wc.OpenRead(uri);
+                        Bitmap bitmap = new Bitmap(stream);
+                        stream.Close();
+                        try
+                        {
+                            Invoke(new Action(() =>
+                            listView1.SmallImageList.Images.Add(timeline[i].User.ScreenName, bitmap)));
+                        }
+                        catch { }
+                    }
+                    ShowData.Add(new ListViewItem(new string[] { timeline[i].User.ScreenName, timeline[i].Text }, timeline[i].User.ScreenName));
+                }
+                RenewedFlag = true;
+            }));
+            th.Start();
+        }
 
 		private void timer1_Tick(object sender, EventArgs e)
 		{
 			if (RenewedFlag)
 			{
-				textBox1.Text = ShowData;
+                listView1.Items.Clear();
+                listView1.Items.AddRange(ShowData.ToArray());
 				RenewedFlag = false;
 			}
 		}
@@ -233,5 +289,105 @@ namespace Alicium2
 		{
 			Columns.Remove(this);
 		}
+
+        private void toolStripDropDownButton1_Click(object sender, EventArgs e)
+        {
+            Renew();
+        }
+
+        private void toolStripDropDownButton2_Click(object sender, EventArgs e)
+        {
+            toolStripStatusLabel1.Text = "Restarting...";
+            ts.EndStream();
+            timeline.Clear();
+            Main.Try(new Action(() =>
+            {
+                if (st == StartType.UserStream)
+                {
+                    ts.StartUserStream(null, new StreamStoppedCallback((x) => { toolStripStatusLabel1.Text = "Stopped."; }), new StatusCreatedCallback(x => { Add(x); }), null, null, null, new EventCallback(x => { Event(x); }), null);
+                    var tt = TwitterTimeline.HomeTimeline(ts.Tokens);
+                    try
+                    {
+                        foreach (var tss in tt.ResponseObject)
+                        {
+                            timeline.Add(tss);
+                        }
+                        toolStripStatusLabel1.Text = "Restarted.";
+                    }
+                    catch
+                    {
+                        MessageBox.Show(tt.ErrorMessage);
+                    }
+                }
+                else if (st == StartType.FilterStream)
+                {
+                    string query = "";
+                    if (ts.StreamOptions.Track.Count != 0)
+                    {
+                        foreach (string ss in ts.StreamOptions.Track)
+                        {
+                            query += ss + "+AND+";
+                        }
+                        query = query.Remove(query.Length - 5, 5);
+                    }
+                    ts.StartPublicStream(new StreamStoppedCallback((x) => { toolStripStatusLabel1.Text = "Stopped."; }), new StatusCreatedCallback(x => { Add(x); }), null, new EventCallback(x => { Event(x); }));
+                    var tt = TwitterSearch.Search(ts.Tokens, query, new SearchOptions() { ResultType = SearchOptionsResultType.Popular });
+                    try
+                    {
+                        foreach (var tss in tt.ResponseObject)
+                        {
+                            timeline.Add(new TwitterStatus() { Text = tss.Text, User = new TwitterUser() { ScreenName = tss.FromUserScreenName } });
+                        }
+                        toolStripStatusLabel1.Text = "Restarted.";
+                    }
+                    catch
+                    {
+                        MessageBox.Show(tt.ErrorMessage);
+                    }
+                }
+                else if (st == StartType.Mentions)
+                {
+                    ts.StreamOptions.Track.Add("@" + ExtendedOAuthTokens.Tokens.First<ExtendedOAuthTokens>((x) => { return x.OAuthTokens == ts.Tokens; }).UserName);
+                    ts.StartPublicStream(new StreamStoppedCallback((x) => { toolStripStatusLabel1.Text = "Stopped."; }), new StatusCreatedCallback(x => { Add(x); }), null, new EventCallback(x => { Event(x); }));
+                    var tt = TwitterTimeline.Mentions(ts.Tokens);
+                    try
+                    {
+                        foreach (var tss in tt.ResponseObject)
+                        {
+                            timeline.Add(tss);
+                        }
+                        toolStripStatusLabel1.Text = "Restarted.";
+                    }
+                    catch
+                    {
+                        MessageBox.Show(tt.ErrorMessage);
+                    }
+                }
+                ShowF();
+            }));
+        }
+
+        
+        void StatusStrip1ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+        	
+        }
+        
+        void ToolStripDropDownButton3Click(object sender, EventArgs e)
+        {
+        	Main.ActivateColumn(Main.Columns.IndexOf(this));
+        }
+        
+        void ListView1SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Main.ActivateColumn(Main.Columns.IndexOf(this));
+            try
+            {
+                Main.ActivateStatus(timeline.IndexOf(timeline.Where((x) => { return x == timeline[listView1.SelectedIndices[0]]; }).ToArray()[0]));
+            }
+            catch
+            {
+            }
+        }
 	}
 }
