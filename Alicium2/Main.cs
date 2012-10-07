@@ -152,8 +152,8 @@ namespace Alicium2
 				}
 				else
 				{
-					Columns[i].Location = new Point(360 * i,Columns[i].Fresh ? 0 : 27);
-					Columns[i].Size = new Size(360, this.Size.Height - 170);
+                    Columns[i].Location = new Point((Columns == null || Columns[0] == null ? 360 : Columns[0].Size.Width) * i, Columns[i].Fresh ? 0 : 27);
+					Columns[i].Size = new Size(Columns == null || Columns[0] == null ? 360 : Columns[0].Size.Width, this.Size.Height - 170);
 					if (ActiveColumn == null || ActiveColumn != Columns[i]) Columns[i].Active = false;
 				}
 			}

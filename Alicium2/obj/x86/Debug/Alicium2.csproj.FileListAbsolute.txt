@@ -88,3 +88,5 @@ J:\codes\Alicium2\Alicium2\obj\x86\Debug\Alicium2.About.resources
 J:\codes\Alicium2\Alicium2\obj\x86\Debug\Alicium2.AccountManager.resources
 J:\codes\Alicium2\Alicium2\obj\x86\Debug\Alicium2.OAuth.resources
 J:\codes\Alicium2\Alicium2\obj\x86\Debug\GenerateResource.read.4.tlog
+D:\codes\Alicium2\Alicium2\obj\x86\Debug\Alicium2.About.resources
+D:\codes\Alicium2\Alicium2\obj\x86\Debug\GenerateResource.read.4.tlog
