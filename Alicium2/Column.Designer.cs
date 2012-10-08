@@ -105,12 +105,16 @@
             // 
             // listView1
             // 
+            this.listView1.BackgroundImageTiled = true;
             this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.User,
             this.Tweet});
+            this.listView1.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listView1.GridLines = true;
+            this.listView1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listView1.Location = new System.Drawing.Point(0, 0);
+            this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(344, 371);
             this.listView1.TabIndex = 2;
@@ -139,9 +143,9 @@
             this.ForeColor = System.Drawing.SystemColors.ControlText;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(360, 2164);
+            this.MaximumSize = new System.Drawing.Size(3600, 2400);
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(120, 36);
+            this.MinimumSize = new System.Drawing.Size(0, 36);
             this.Name = "Column";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Column";

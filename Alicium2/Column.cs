@@ -23,13 +23,89 @@ namespace Alicium2
 		StartType st;
 		public static List<Column> Columns = new List<Column>();
 		public bool Fresh = true;
-		public enum StartType
-		{
-			UserStream,FilterStream,Mentions
+        public Image back;
+        public enum StartType
+        {
+            UserStream, FilterStream, Mentions
+        }
+        public static string Ids = "0123456789abdefghikmnopqrstuvwxyz";
+        public Column(TwitterStream stream, StartType s, string title)
+        {
+            if (back != null)
+            {
+                listView1.BackgroundImage = back;
+            }
+            InitializeComponent();
+            listView1.SmallImageList = new ImageList();
+			ts = stream;
+			if (s == StartType.UserStream)
+			{
+                ts.StartUserStream(null, new StreamStoppedCallback((x) => { toolStripStatusLabel1.Text = "Stopped."; }), new StatusCreatedCallback(x => { Add(x); }), null, null, null, new EventCallback(x => { Event(x); }), null);
+				var tt = TwitterTimeline.HomeTimeline(stream.Tokens);
+				try
+				{
+					foreach (var tss in tt.ResponseObject)
+					{
+						timeline.Add(tss);
+					}
+				}
+				catch
+				{
+					MessageBox.Show(tt.ErrorMessage);
+				}
+			}
+			else if (s == StartType.FilterStream)
+			{
+				string query = "";
+                if (ts.StreamOptions.Track.Count != 0)
+                {
+                    foreach (string ss in ts.StreamOptions.Track)
+                    {
+                        query += ss + "+AND+";
+                    }
+                    query = query.Remove(query.Length - 5, 5);
+                }
+                ts.StartPublicStream(new StreamStoppedCallback((x) => { toolStripStatusLabel1.Text = "Stopped."; }), new StatusCreatedCallback(x => { Add(x); }), null, new EventCallback(x => { Event(x); }));
+				var tt = TwitterSearch.Search(ts.Tokens, query, new SearchOptions() { ResultType = SearchOptionsResultType.Popular });
+				try
+				{
+					foreach (var tss in tt.ResponseObject)
+					{
+						timeline.Add(new TwitterStatus() { Text = tss.Text, User = new TwitterUser() { ScreenName = tss.FromUserScreenName } });
+					}
+				}
+				catch
+				{
+					MessageBox.Show(tt.ErrorMessage);
+				}
+			}
+			else if (s == StartType.Mentions)
+			{
+				ts.StreamOptions.Track.Add("@" + ExtendedOAuthTokens.Tokens.First<ExtendedOAuthTokens>((x) => { return x.OAuthTokens == ts.Tokens; }).UserName);
+                ts.StartPublicStream(new StreamStoppedCallback((x) => { toolStripStatusLabel1.Text = "Stopped."; }), new StatusCreatedCallback(x => { Add(x); }), null, new EventCallback(x => { Event(x); }));
+				var tt = TwitterTimeline.Mentions(stream.Tokens);
+				try
+				{
+					foreach (var tss in tt.ResponseObject)
+					{
+						timeline.Add(tss);
+					}
+				}
+				catch
+				{
+					MessageBox.Show(tt.ErrorMessage);
+				}
+			}
+			st = s;
+			this.Text = title;
+			Columns.Add(this);
+            ShowF();
 		}
-		public Column(TwitterStream stream, StartType s, string title)
-		{
-			InitializeComponent();
+        public Column(TwitterStream stream, StartType s, string title,Image b)
+        {
+            InitializeComponent();
+            back = b;
+            listView1.BackgroundImage = back;
             listView1.SmallImageList = new ImageList();
 			ts = stream;
 			if (s == StartType.UserStream)
@@ -282,7 +358,19 @@ namespace Alicium2
 			string _Track = "",_Follow = "";
 			ts.StreamOptions.Track.ForEach((s) => {_Track += s + ",";});
 			ts.StreamOptions.Follow.ForEach((p) => {_Follow += p + ",";});
-			return new ColumnData() { AccountName = TwitterAccount.VerifyCredentials(ts.Tokens).ResponseObject.ScreenName, Tille = this.Text, Track = _Track, Follow = _Follow, ColumnType = st };
+            if (back == null)
+            {
+                return new ColumnData() { AccountName = TwitterAccount.VerifyCredentials(ts.Tokens).ResponseObject.ScreenName, Tille = this.Text, Track = _Track, Follow = _Follow, ColumnType = st, Image = "null"};
+            }
+            else
+            {
+                try
+                {
+                    back.Save("Settings/" + Main.Columns.IndexOf(this) + ".bmp");
+                }
+                catch { }
+                return new ColumnData() { AccountName = TwitterAccount.VerifyCredentials(ts.Tokens).ResponseObject.ScreenName, Tille = this.Text, Track = _Track, Follow = _Follow, ColumnType = st, Image = "Settings/" + Main.Columns.IndexOf(this) + ".bmp" };
+            }
 		}
 
 		private void Column_FormClosed(object sender, FormClosedEventArgs e)

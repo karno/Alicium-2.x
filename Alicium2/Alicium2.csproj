@@ -91,30 +91,30 @@
     <Compile Include="AccountManager.Designer.cs">
       <DependentUpon>AccountManager.cs</DependentUpon>
     </Compile>
-    <Compile Include="Extends.cs" />
     <Compile Include="Column.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Column.Designer.cs">
+    <Compile Include="Column.designer.cs">
       <DependentUpon>Column.cs</DependentUpon>
     </Compile>
+    <Compile Include="Extends.cs" />
     <Compile Include="ColumnEditer.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ColumnEditer.Designer.cs">
       <DependentUpon>ColumnEditer.cs</DependentUpon>
     </Compile>
-    <Compile Include="OAuth.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="OAuth.designer.cs">
-      <DependentUpon>OAuth.cs</DependentUpon>
-    </Compile>
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Main.designer.cs">
       <DependentUpon>Main.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OAuth.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OAuth.designer.cs">
+      <DependentUpon>OAuth.cs</DependentUpon>
     </Compile>
     <Compile Include="MariariConsole.cs">
       <SubType>Form</SubType>
@@ -137,11 +137,11 @@
     <EmbeddedResource Include="ColumnEditer.resx">
       <DependentUpon>ColumnEditer.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="OAuth.resx">
-      <DependentUpon>OAuth.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OAuth.resx">
+      <DependentUpon>OAuth.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MariariConsole.resx">
       <DependentUpon>MariariConsole.cs</DependentUpon>

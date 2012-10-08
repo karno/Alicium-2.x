@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Drawing;
 using Twitterizer;
 using System.Threading;
 using System.IO;
@@ -241,10 +242,15 @@ namespace Alicium2
 		public string Follow;
 		public string AccountName;
 		public string Tille;
+        public string Image;
 		public Column.StartType ColumnType;
 		public ColumnData Set(string _AccountName, string _Title, string _Track, string _Follow, Column.StartType Start)
 		{
-			return new ColumnData() { AccountName = _AccountName, Tille = _Title, Track = _Track, Follow = _Follow, ColumnType = Start };
+			return new ColumnData() { AccountName = _AccountName, Tille = _Title, Track = _Track, Follow = _Follow, ColumnType = Start,Image = "null"};
+		}
+		public ColumnData Set(string _AccountName, string _Title, string _Track, string _Follow, Column.StartType Start,string b)
+		{
+			return new ColumnData() { AccountName = _AccountName, Tille = _Title, Track = _Track, Follow = _Follow, ColumnType = Start,Image = b};
 		}
 		public Column ToColumn(Main m)
 		{
@@ -253,7 +259,10 @@ namespace Alicium2
 			v.Follow.AddRange(Rc.CutString(",", Follow));
 			try
 			{
-				return new Column(new Twitterizer.Streaming.TwitterStream(m.Accounts[AccountName].OAuthTokens, "Alicium", v), ColumnType, Tille);
+                if (Image == "null")
+                    return new Column(new Twitterizer.Streaming.TwitterStream(m.Accounts[AccountName].OAuthTokens, "Alicium", v), ColumnType, Tille);
+                else
+                    return new Column(new Twitterizer.Streaming.TwitterStream(m.Accounts[AccountName].OAuthTokens, "Alicium", v), ColumnType, Tille, Bitmap.FromFile(Image));
 			}
 			catch
 			{
