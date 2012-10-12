@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
 using Twitterizer;
@@ -18,117 +19,92 @@ namespace Alicium2
 		}
 		public void Post(string Tweet,ExtendedOAuthTokens[] NowTokens)
 		{
-			Thread a = new Thread(new ThreadStart(() =>
-			                                      {
-                                                      Main.Try(new Action(() =>
-                                                      {
-                                                          foreach (ExtendedOAuthTokens o in m.NowTokens)
-                                                          {
-                                                              var t = TwitterStatus.Update(o.OAuthTokens, Tweet);
-                                                              if (t.Result != RequestResult.Success)
-                                                              {
-                                                                  if (t.Result == RequestResult.RateLimited)
-                                                                  {
-                                                                      MConsole.WriteLine(o.UserName + " has been RateLimited. ResetDate must be " + t.RateLimiting.ResetDate.ToString() + ".");
-                                                                  }
-                                                                  else
-                                                                  {
-                                                                      MConsole.WriteLine("Some error happened : " + t.ErrorMessage);
-                                                                  }
-                                                              }
-                                                              else MConsole.WriteLine("Success to tweet with " + o.UserName + ": " + Tweet);
-                                                          }
-                                                      }));
-			                                      }));
-            Main.Try(new Action(() =>
-            a.Start()));
+            new Task(() =>
+            {
+                foreach (ExtendedOAuthTokens o in m.NowTokens)
+                {
+                    var t = TwitterStatus.Update(o.OAuthTokens, Tweet);
+                    if (t.Result != RequestResult.Success)
+                    {
+                        if (t.Result == RequestResult.RateLimited)
+                        {
+                            MConsole.WriteLine(o.UserName + " has been RateLimited. ResetDate must be " + t.RateLimiting.ResetDate.ToString() + ".");
+                        }
+                        else
+                        {
+                            MConsole.WriteLine("Some error happened : " + t.ErrorMessage);
+                        }
+                    }
+                    else MConsole.WriteLine("Success to tweet with " + o.UserName + ": " + Tweet);
+                }
+            }).Start();
 		}
         public void Post(string Tweet, TwitterStatus ReplyTo, ExtendedOAuthTokens[] NowToken)
 		{
-			Thread a = new Thread(new ThreadStart(() =>
-			                                      {
-                                                      Main.Try(new Action(() =>
-                                                      {
-                                                          foreach (ExtendedOAuthTokens o in m.NowTokens)
-                                                          {
-                                                              var t = TwitterStatus.Update(o.OAuthTokens, Tweet, new StatusUpdateOptions() { InReplyToStatusId = ReplyTo.Id });
-                                                              if (t.Result != RequestResult.Success)
-                                                              {
-                                                                  if (t.Result == RequestResult.RateLimited)
-                                                                  {
-                                                                      MConsole.WriteLine(o.UserName + " has been RateLimited. ResetDate must be " + t.RateLimiting.ResetDate.ToString() + ".");
-                                                                  }
-                                                                  else
-                                                                  {
-                                                                      MConsole.WriteLine("Some error happened : " + t.ErrorMessage);
-                                                                  }
-                                                              }
-                                                              else MConsole.WriteLine("Success to tweet as " + o.UserName + " " + Tweet);
-                                                          }
-                                                      }));
-			                                      }));
-            Main.Try(new Action(() => {
-			a.Start();
-            }));
+            new Task(() =>
+            {
+                foreach (ExtendedOAuthTokens o in m.NowTokens)
+                {
+                    var t = TwitterStatus.Update(o.OAuthTokens, Tweet, new StatusUpdateOptions() { InReplyToStatusId = ReplyTo.Id });
+                    if (t.Result != RequestResult.Success)
+                    {
+                        if (t.Result == RequestResult.RateLimited)
+                        {
+                            MConsole.WriteLine(o.UserName + " has been RateLimited. ResetDate must be " + t.RateLimiting.ResetDate.ToString() + ".");
+                        }
+                        else
+                        {
+                            MConsole.WriteLine("Some error happened : " + t.ErrorMessage);
+                        }
+                    }
+                    else MConsole.WriteLine("Success to tweet as " + o.UserName + " " + Tweet);
+                }
+            }).Start();
 		}
         public void Favorite(TwitterStatus t, ExtendedOAuthTokens[] NowToken)
 		{
-			Thread a = new Thread(new ThreadStart(() =>
-			                                      {
-                                                      Main.Try(new Action(() =>
-                                                      {
-                                                          foreach (ExtendedOAuthTokens o in m.NowTokens)
-                                                          {
-                                                              var f = TwitterFavorite.Create(o.OAuthTokens, t.Id);
+			new Task(() =>
+	        {
+                foreach (ExtendedOAuthTokens o in m.NowTokens)
+                {
+                    var f = TwitterFavorite.Create(o.OAuthTokens, t.Id);
 
-                                                              if (f.Result != RequestResult.Success)
-                                                              {
-                                                                  if (f.Result == RequestResult.RateLimited)
-                                                                  {
-                                                                      MConsole.WriteLine(o.UserName + " has been RateLimited. ResetDate must be " + f.RateLimiting.ResetDate.ToString() + ".");
-                                                                  }
-                                                                  else
-                                                                  {
-                                                                      MConsole.WriteLine("Some error happened : " + f.ErrorMessage);
-                                                                  }
-                                                              }
-                                                              else MConsole.WriteLine("Success to favorite [" + t.User.ScreenName + ": " + t.Text + "] as " + o.UserName);
-                                                          };
-                                                      }));
-			                                      }));
-            Main.Try(new Action(() =>
-            {
-                a.Start();
-            }));
+                    if (f.Result != RequestResult.Success)
+                    {
+                        if (f.Result == RequestResult.RateLimited)
+                        {
+                            MConsole.WriteLine(o.UserName + " has been RateLimited. ResetDate must be " + f.RateLimiting.ResetDate.ToString() + ".");
+                        }
+                        else
+                        {
+                            MConsole.WriteLine("Some error happened : " + f.ErrorMessage);
+                        }
+                    }
+                    else MConsole.WriteLine("Success to favorite [" + t.User.ScreenName + ": " + t.Text + "] as " + o.UserName);
+                };
+	        }).Start();
 		}
         public void Retweet(TwitterStatus t, ExtendedOAuthTokens[] NowToken)
-		{
-			Thread a = new Thread(new ThreadStart(() =>
-                                                  {
-                                                      Main.Try(new Action(() =>
-                                                      {
-                                                          foreach (ExtendedOAuthTokens o in m.NowTokens)
-                                                          {
-                                                              var f = TwitterStatus.Retweet(o.OAuthTokens, t.Id);
-                                                              if (f.Result != RequestResult.Success)
-                                                              {
-                                                                  if (f.Result == RequestResult.RateLimited)
-                                                                  {
-                                                                      MConsole.WriteLine(o.UserName + " has been RateLimited. ResetDate must be " + f.RateLimiting.ResetDate.ToString() + ".");
-                                                                  }
-                                                                  else
-                                                                  {
-                                                                      MConsole.WriteLine("Some error happened : " + f.ErrorMessage);
-                                                                  }
-                                                              }
-                                                              else MConsole.WriteLine("Success to retweet [" + t.User.ScreenName + ": " + t.Text + "] as " + o.UserName);
-                                                          }
-                                                      }));
-			                                      }));
-            Main.Try(new Action(() =>
+        {
+			new Task(() =>
             {
-                a.Start();
-            }));
+                foreach (ExtendedOAuthTokens o in m.NowTokens)
+                {
+                    var f = TwitterStatus.Retweet(o.OAuthTokens, t.Id);
+                    if (f.Result != RequestResult.Success)
+                    {
+                        if (f.Result == RequestResult.RateLimited)
+                        {
+                            MConsole.WriteLine(o.UserName + " has been RateLimited. ResetDate must be " + f.RateLimiting.ResetDate.ToString() + ".");
+                        }
+                        else
+                        {
+                            MConsole.WriteLine("Some error happened : " + f.ErrorMessage);
+                        }
+                    }
+                    else MConsole.WriteLine("Success to retweet [" + t.User.ScreenName + ": " + t.Text + "] as " + o.UserName);
+                }
+			}).Start();
 		}
 	}
 	public class ExtendedOAuthTokens
