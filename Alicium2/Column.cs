@@ -226,67 +226,64 @@ namespace Alicium2
         }
         public void Renew()
         {
-            Main.Try(new Action(() =>
-                                {
-                                    if (st == StartType.UserStream)
-                                    {
-                                        timeline.Clear();
-                                        var tt = TwitterTimeline.HomeTimeline(ts.Tokens);
-                                        try
-                                        {
-                                            foreach (var tss in tt.ResponseObject)
-                                            {
-                                                timeline.Add(tss);
-                                            }
-                                        }
-                                        catch
-                                        {
-                                            MessageBox.Show(tt.ErrorMessage);
-                                        }
-                                    }
-                                    else if (st == StartType.FilterStream)
-                                    {
-                                        string query = "";
-                                        if (ts.StreamOptions.Track.Count != 0)
-                                        {
-                                            foreach (string ss in ts.StreamOptions.Track)
-                                            {
-                                                query += ss + "+AND+";
-                                            }
-                                            query = query.Remove(query.Length - 5, 5);
-                                        }
-                                        timeline.Clear();
-                                        var tt = TwitterSearch.Search(ts.Tokens, query, new SearchOptions() { ResultType = SearchOptionsResultType.Popular });
-                                        try
-                                        {
-                                            foreach (var tss in tt.ResponseObject)
-                                            {
-                                                timeline.Add(new TwitterStatus() { Text = tss.Text, User = new TwitterUser() { ScreenName = tss.FromUserScreenName } });
-                                            }
-                                        }
-                                        catch
-                                        {
-                                            MessageBox.Show(tt.ErrorMessage);
-                                        }
-                                    }
-                                    else if (st == StartType.Mentions)
-                                    {
-                                        timeline.Clear();
-                                        var tt = TwitterTimeline.Mentions(ts.Tokens);
-                                        try
-                                        {
-                                            foreach (var tss in tt.ResponseObject)
-                                            {
-                                                timeline.Add(tss);
-                                            }
-                                        }
-                                        catch
-                                        {
-                                            MessageBox.Show(tt.ErrorMessage);
-                                        }
-                                    }
-                                    ShowF();
-                                }));
+            if (st == StartType.UserStream)
+            {
+                timeline.Clear();
+                var tt = TwitterTimeline.HomeTimeline(ts.Tokens);
+                try
+                {
+                    foreach (var tss in tt.ResponseObject)
+                    {
+                        timeline.Add(tss);
+                    }
+                }
+                catch
+                {
+                    MessageBox.Show(tt.ErrorMessage);
+                }
+            }
+            else if (st == StartType.FilterStream)
+            {
+                string query = "";
+                if (ts.StreamOptions.Track.Count != 0)
+                {
+                    foreach (string ss in ts.StreamOptions.Track)
+                    {
+                        query += ss + "+AND+";
+                    }
+                    query = query.Remove(query.Length - 5, 5);
+                }
+                timeline.Clear();
+                var tt = TwitterSearch.Search(ts.Tokens, query, new SearchOptions() { ResultType = SearchOptionsResultType.Popular });
+                try
+                {
+                    foreach (var tss in tt.ResponseObject)
+                    {
+                        timeline.Add(new TwitterStatus() { Text = tss.Text, User = new TwitterUser() { ScreenName = tss.FromUserScreenName } });
+                    }
+                }
+                catch
+                {
+                    MessageBox.Show(tt.ErrorMessage);
+                }
+            }
+            else if (st == StartType.Mentions)
+            {
+                timeline.Clear();
+                var tt = TwitterTimeline.Mentions(ts.Tokens);
+                try
+                {
+                    foreach (var tss in tt.ResponseObject)
+                    {
+                        timeline.Add(tss);
+                    }
+                }
+                catch
+                {
+                    MessageBox.Show(tt.ErrorMessage);
+                }
+            }
+            ShowF();
         }
         void Event(TwitterStreamEvent e)
         {
@@ -395,71 +392,68 @@ namespace Alicium2
             toolStripStatusLabel1.Text = "Restarting...";
             ts.EndStream();
             timeline.Clear();
-            Main.Try(new Action(() =>
-                                {
-                                    if (st == StartType.UserStream)
-                                    {
-                                        ts.StartUserStream(null, new StreamStoppedCallback((x) => { toolStripStatusLabel1.Text = "Stopped."; }), new StatusCreatedCallback(x => { Add(x); }), null, null, null, new EventCallback(x => { Event(x); }), null);
-                                        var tt = TwitterTimeline.HomeTimeline(ts.Tokens);
-                                        try
-                                        {
-                                            foreach (var tss in tt.ResponseObject)
-                                            {
-                                                timeline.Add(tss);
-                                            }
-                                            toolStripStatusLabel1.Text = "Restarted.";
-                                        }
-                                        catch
-                                        {
-                                            MessageBox.Show(tt.ErrorMessage);
-                                        }
-                                    }
-                                    else if (st == StartType.FilterStream)
-                                    {
-                                        string query = "";
-                                        if (ts.StreamOptions.Track.Count != 0)
-                                        {
-                                            foreach (string ss in ts.StreamOptions.Track)
-                                            {
-                                                query += ss + "+AND+";
-                                            }
-                                            query = query.Remove(query.Length - 5, 5);
-                                        }
-                                        ts.StartPublicStream(new StreamStoppedCallback((x) => { toolStripStatusLabel1.Text = "Stopped."; }), new StatusCreatedCallback(x => { Add(x); }), null, new EventCallback(x => { Event(x); }));
-                                        var tt = TwitterSearch.Search(ts.Tokens, query, new SearchOptions() { ResultType = SearchOptionsResultType.Popular });
-                                        try
-                                        {
-                                            foreach (var tss in tt.ResponseObject)
-                                            {
-                                                timeline.Add(new TwitterStatus() { Text = tss.Text, User = new TwitterUser() { ScreenName = tss.FromUserScreenName } });
-                                            }
-                                            toolStripStatusLabel1.Text = "Restarted.";
-                                        }
-                                        catch
-                                        {
-                                            MessageBox.Show(tt.ErrorMessage);
-                                        }
-                                    }
-                                    else if (st == StartType.Mentions)
-                                    {
-                                        ts.StreamOptions.Track.Add("@" + ExtendedOAuthTokens.Tokens.First<ExtendedOAuthTokens>((x) => { return x.OAuthTokens == ts.Tokens; }).UserName);
-                                        ts.StartPublicStream(new StreamStoppedCallback((x) => { toolStripStatusLabel1.Text = "Stopped."; }), new StatusCreatedCallback(x => { Add(x); }), null, new EventCallback(x => { Event(x); }));
-                                        var tt = TwitterTimeline.Mentions(ts.Tokens);
-                                        try
-                                        {
-                                            foreach (var tss in tt.ResponseObject)
-                                            {
-                                                timeline.Add(tss);
-                                            }
-                                            toolStripStatusLabel1.Text = "Restarted.";
-                                        }
-                                        catch
-                                        {
-                                            MessageBox.Show(tt.ErrorMessage);
-                                        }
-                                    }
-                                    ShowF();
-                                }));
+            if (st == StartType.UserStream)
+            {
+                ts.StartUserStream(null, new StreamStoppedCallback((x) => { toolStripStatusLabel1.Text = "Stopped."; }), new StatusCreatedCallback(x => { Add(x); }), null, null, null, new EventCallback(x => { Event(x); }), null);
+                var tt = TwitterTimeline.HomeTimeline(ts.Tokens);
+                try
+                {
+                    foreach (var tss in tt.ResponseObject)
+                    {
+                        timeline.Add(tss);
+                    }
+                    toolStripStatusLabel1.Text = "Restarted.";
+                }
+                catch
+                {
+                    MessageBox.Show(tt.ErrorMessage);
+                }
+            }
+            else if (st == StartType.FilterStream)
+            {
+                string query = "";
+                if (ts.StreamOptions.Track.Count != 0)
+                {
+                    foreach (string ss in ts.StreamOptions.Track)
+                    {
+                        query += ss + "+AND+";
+                    }
+                    query = query.Remove(query.Length - 5, 5);
+                }
+                ts.StartPublicStream(new StreamStoppedCallback((x) => { toolStripStatusLabel1.Text = "Stopped."; }), new StatusCreatedCallback(x => { Add(x); }), null, new EventCallback(x => { Event(x); }));
+                var tt = TwitterSearch.Search(ts.Tokens, query, new SearchOptions() { ResultType = SearchOptionsResultType.Popular });
+                try
+                {
+                    foreach (var tss in tt.ResponseObject)
+                    {
+                        timeline.Add(new TwitterStatus() { Text = tss.Text, User = new TwitterUser() { ScreenName = tss.FromUserScreenName } });
+                    }
+                    toolStripStatusLabel1.Text = "Restarted.";
+                }
+                catch
+                {
+                    MessageBox.Show(tt.ErrorMessage);
+                }
+            }
+            else if (st == StartType.Mentions)
+            {
+                ts.StreamOptions.Track.Add("@" + ExtendedOAuthTokens.Tokens.First<ExtendedOAuthTokens>((x) => { return x.OAuthTokens == ts.Tokens; }).UserName);
+                ts.StartPublicStream(new StreamStoppedCallback((x) => { toolStripStatusLabel1.Text = "Stopped."; }), new StatusCreatedCallback(x => { Add(x); }), null, new EventCallback(x => { Event(x); }));
+                var tt = TwitterTimeline.Mentions(ts.Tokens);
+                try
+                {
+                    foreach (var tss in tt.ResponseObject)
+                    {
+                        timeline.Add(tss);
+                    }
+                    toolStripStatusLabel1.Text = "Restarted.";
+                }
+                catch
+                {
+                    MessageBox.Show(tt.ErrorMessage);
+                }
+            }
+            ShowF();
         }
 
 

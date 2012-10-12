@@ -42,19 +42,16 @@ namespace Alicium2
         private void button2_Click(object sender, EventArgs e)
         {
             string pin = textBox_PIN.Text;
-            Main.Try(new Action(() =>
-            {
-                OAuthTokenResponse res = OAuthUtility.GetAccessToken(
-                  ConsumerKey, ConsumerSecret, oatr.Token, pin);
-                string AccessToken = res.Token;
-                string AccessTokenSecret = res.TokenSecret;
-                textBox_Output.Text += "Accesss Token: " + AccessToken + " Have gotten\r\n";
-                textBox_Output.Text += "Accesss Token Secret: " + AccessTokenSecret + " Have gotten\r\n";
-                result = new ExtendedOAuthTokens().Create(AccessToken, AccessTokenSecret, "");
-                var a = Interaction.InputBox("Input your name.", "Success", "your name");
-                result.UserName = a;
-                button3.Enabled = true;
-            }));
+            OAuthTokenResponse res = OAuthUtility.GetAccessToken(
+                ConsumerKey, ConsumerSecret, oatr.Token, pin);
+            string AccessToken = res.Token;
+            string AccessTokenSecret = res.TokenSecret;
+            textBox_Output.Text += "Accesss Token: " + AccessToken + " Have gotten\r\n";
+            textBox_Output.Text += "Accesss Token Secret: " + AccessTokenSecret + " Have gotten\r\n";
+            result = new ExtendedOAuthTokens().Create(AccessToken, AccessTokenSecret, "");
+            var a = Interaction.InputBox("Input your name.", "Success", "your name");
+            result.UserName = a;
+            button3.Enabled = true;
         }
 
         private void Form1_Load(object sender, EventArgs e)
