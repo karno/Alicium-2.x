@@ -228,10 +228,12 @@ namespace Alicium2
 				{
 					Rc.SaveToXML<ColumnData>(f[i].ToColumnData(), "Settings/Columns_" + i + ".dat");
 				}
+                MessageBox.Show("Success to save.");
 				return true;
 			}
 			/*catch
             {
+                MessageBox.Show("Failed to save.");
                 return false;
             }*/
 		}
@@ -262,7 +264,13 @@ namespace Alicium2
                 if (Image == "null")
                     return new Column(new Twitterizer.Streaming.TwitterStream(m.Accounts[AccountName].OAuthTokens, "Alicium", v), ColumnType, Tille);
                 else
-                    return new Column(new Twitterizer.Streaming.TwitterStream(m.Accounts[AccountName].OAuthTokens, "Alicium", v), ColumnType, Tille, Bitmap.FromFile(Image));
+                {
+                    using (var f = File.Open(Image, FileMode.Open, FileAccess.Read))
+                    {
+                        var b = Bitmap.FromStream(f);
+                        return new Column(new Twitterizer.Streaming.TwitterStream(m.Accounts[AccountName].OAuthTokens, "Alicium", v), ColumnType, Tille, (Image)b.Clone());
+                    }
+                }
 			}
 			catch
 			{
