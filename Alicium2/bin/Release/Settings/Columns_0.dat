@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<ColumnData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Track />
-  <Follow />
-  <AccountName>a1cn</AccountName>
-  <Tille>0: TimeLine</Tille>
-  <Image>Settings/0.bmp</Image>
-  <ColumnType>UserStream</ColumnType>
-</ColumnData>

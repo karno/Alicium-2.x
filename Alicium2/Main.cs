@@ -141,7 +141,7 @@ namespace Alicium2
 				Columns.Add(r);
 			}
 		}
-		public static bool Selected = false;
+
 		private void timer1_Tick(object sender, EventArgs e)
 		{
 			for (int i = 0; i < Columns.Count; i++)
@@ -152,19 +152,27 @@ namespace Alicium2
 				}
 				else
 				{
-					Columns[i].Location = new Point((Columns == null || Columns[0] == null ? 360 : Columns[0].Size.Width) * i, Columns[i].Fresh ? 0 : 27);
-					Columns[i].Size = new Size(Columns == null || Columns[0] == null ? 360 : Columns[0].Size.Width, this.Size.Height - 160);
+                    Columns[i].Location = new Point((Columns == null || Columns[0] == null ? 360 : Columns[0].Size.Width) * i, Columns[i].Fresh ? 0 : 27);
+					Columns[i].Size = new Size(Columns == null || Columns[0] == null ? 360 : Columns[0].Size.Width, this.Size.Height - 170);
 					if (ActiveColumn == null || ActiveColumn != Columns[i]) Columns[i].Active = false;
 				}
-			}
-			if(!Selected)
-			{
-				ShowActiveStatus();
-				Selected = true;
 			}
 			if (MConsole.nowtext != null && MConsole.nowtext != "")
 			{
 				Status.Text = MConsole.now;
+			}
+			if (ActiveStatus != null)
+			{
+				ActiveTweetText.Text = @"[ActiveColumn]" + ActiveColumn.Text +@"
+[Active]
+User: " + ActiveStatus.User.ScreenName + @"
+Text: " + ActiveStatus.Text;
+			}
+			else
+			{
+				ActiveTweetText.Text = @"[ActiveColumn]" + (ActiveColumn == null ? "null" : ActiveColumn.Text) + @"
+[Active]
+null";
 			}
 		}
 
@@ -272,7 +280,6 @@ namespace Alicium2
 					try
 					{
 						ActivateStatus(o);
-						ShowActiveStatus();
 						IsCommandMode = false;
 						PostText.ReadOnly = false;
 						CommandCount = 0;
@@ -345,54 +352,6 @@ namespace Alicium2
 		{
 			ActiveStatus = ActiveColumn[index];
 		}
-		public void ShowActiveStatus()
-		{
-			if (ActiveStatus != null)
-			{
-				PostText.Text = "@" + ActiveStatus.User.ScreenName + " ";
-				PostText.Select(PostText.Text.Length - 1,0);
-				var th = new System.Threading.Thread(new System.Threading.ThreadStart(() =>
-				                                                                      {
-				                                                                      	Invoke(new Action(() =>
-				                                                                      	                  {
-				                                                                      	                  	ActiveStatusView.SmallImageList = new ImageList();
-				                                                                      	                  }));
-				                                                                      	string uri = ActiveStatus.User.ProfileImageLocation;
-				                                                                      	using (WebClient wc = new WebClient())
-				                                                                      	{
-				                                                                      		using (Stream stream = wc.OpenRead(uri))
-				                                                                      		{
-				                                                                      			Bitmap bitmap = new Bitmap(stream);
-				                                                                      			Invoke(new Action(() => ActiveStatusView.SmallImageList.Images.Add(ActiveStatus.User.ScreenName, bitmap)));
-				                                                                      		}
-				                                                                      	}
-				                                                                      	var i = new ListViewItem(new[] { ActiveStatus.User.ScreenName, ActiveStatus.Text }, ActiveStatus.User.ScreenName);
-				                                                                      	Invoke(new Action(() =>
-				                                                                      	                  {
-				                                                                      	                  	ActiveStatusView.Items.Clear();
-				                                                                      	                  	ActiveStatusView.Items.Add(i);
-				                                                                      	                  }));
-				                                                                      }));
-				th.Start();
-			}
-			else
-			{
-				var th = new System.Threading.Thread(new System.Threading.ThreadStart(() =>
-				                                                                      {
-				                                                                      	Invoke(new Action(() =>
-				                                                                      	                  {
-				                                                                      	                  	ActiveStatusView.SmallImageList = new ImageList();
-				                                                                      	                  }));
-				                                                                      	var i = new ListViewItem(new[] { "null", "null" });
-				                                                                      	Invoke(new Action(() =>
-				                                                                      	                  {
-				                                                                      	                  	ActiveStatusView.Items.Clear();
-				                                                                      	                  	ActiveStatusView.Items.Add(i);
-				                                                                      	                  }));
-				                                                                      }));
-				th.Start();
-			}
-		}
 		public static void ActivateColumn(int index)
 		{
 			ActiveColumn = Columns[index];
@@ -441,27 +400,6 @@ namespace Alicium2
 		void AboutToolStripMenuItemClick(object sender, EventArgs e)
 		{
 			new About().ShowDialog();
-		}
-
-		private void RTButton_Click(object sender, EventArgs e)
-		{
-			if(ActiveStatus !=null)
-			{
-				twitterDo.Retweet(ActiveStatus,NowTokens);
-			}
-		}
-
-		private void FavButton_Click(object sender, EventArgs e)
-		{
-			if(ActiveStatus !=null)
-			{
-				twitterDo.Favorite(ActiveStatus,NowTokens);
-			}
-		}
-		
-		void Panel1Paint(object sender, PaintEventArgs e)
-		{
-			
 		}
 	}
 }
