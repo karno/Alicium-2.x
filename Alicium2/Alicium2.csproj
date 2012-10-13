@@ -60,6 +60,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>bin\Debug\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -68,14 +71,11 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="Newtonsoft.Json, Version=4.0.3.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
-      <HintPath>..\..\Alicium\bin\Debug\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Twitterizer2">
+      <HintPath>bin\Debug\Twitterizer2.dll</HintPath>
     </Reference>
-    <Reference Include="Twitterizer2, Version=2.4.0.2028, Culture=neutral, PublicKeyToken=69d1469eac671567">
-      <HintPath>..\..\Alicium\bin\Debug\Twitterizer2.dll</HintPath>
-    </Reference>
-    <Reference Include="Twitterizer2.Streaming, Version=2.4.0.2030, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\Alicium\bin\Debug\Twitterizer2.Streaming.dll</HintPath>
+    <Reference Include="Twitterizer2.Streaming">
+      <HintPath>bin\Debug\Twitterizer2.Streaming.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -103,6 +103,12 @@
     </Compile>
     <Compile Include="ColumnEditer.Designer.cs">
       <DependentUpon>ColumnEditer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="hoge.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="hoge.Designer.cs">
+      <DependentUpon>hoge.cs</DependentUpon>
     </Compile>
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
@@ -136,6 +142,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ColumnEditer.resx">
       <DependentUpon>ColumnEditer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="hoge.resx">
+      <DependentUpon>hoge.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>

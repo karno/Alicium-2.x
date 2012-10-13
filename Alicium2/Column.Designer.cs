@@ -145,7 +145,7 @@
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(3600, 2400);
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(0, 36);
+            this.MinimumSize = new System.Drawing.Size(16, 37);
             this.Name = "Column";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Column";
