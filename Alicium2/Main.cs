@@ -35,66 +35,48 @@ namespace Alicium2
 		public Main()
 		{
 			InitializeComponent();
-			Try(new Action(() =>
-			               {
-			               	if (version < CheckLatestVersion())
-			               	{
-			               		MessageBox.Show("There is an update.");
-			               	}
-			               	Accounts = AccountReader.Read("Settings/Accounts.dat");
-			               	if (Accounts.Count != 0)
-			               	{
-			               		AccountsList.Items.AddRange(Accounts.Keys.ToArray());
-			               	}
-			               	else
-			               	{
-			               		MessageBox.Show("Accounts not found.Let's authenticate your first account.");
-			               		AccountManager m = new AccountManager(Accounts);
-			               		m.ShowDialog();
-			               		if (m.Change)
-			               		{
-			               			Accounts.Clear();
-			               			AccountsList.Items.Clear();
-			               			Accounts = AccountReader.Read("Settings/Accounts.dat");
-			               			if (Accounts.Count != 0)
-			               			{
-			               				AccountsList.Items.AddRange(Accounts.Keys.ToArray());
-			               				AccountsList.SelectedIndex = 0;
-			               			}
-			               		}
-			               	}
-			               	var f = ColumnReader.Load(this);
-			               	for (int i = 0; i < f.Length; i++)
-			               	{
-			               		f[i].TopLevel = false;
-			               		f[i].TopMost = false;
-			               		f[i].Fresh = false;
-			               		f[i].Parent = this;
-			               		f[i].Show();
-			               		f[i].Size = new Size(240, this.Size.Height - 160);
-			               		f[i].Text = f[i].Text.Remove(0,3);
-			               		f[i].Text = i + ": " + f[i].Text;
-			               		f[i].Location = new Point(240 * i, f[i].Fresh ? 0 : 27);
-			               		f[i].Size = new Size(240, this.Size.Height - 160);
-			               		Columns.Add(f[i]);
-			               	}
-			               	twitterDo = new TwitterDo(this);
-			               }));
-		}
-		~Main()
-		{
-		}
-		public static void Try(Action todo)
-		{
-			try
+			if (version < CheckLatestVersion())
 			{
-				todo();
+			    MessageBox.Show("There is an update.");
 			}
-			catch(Exception e)
+			Accounts = AccountReader.Read("Settings/Accounts.dat");
+			if (Accounts.Count != 0)
 			{
-				MessageBox.Show(e.Message,"Error",MessageBoxButtons.OK,MessageBoxIcon.Error,MessageBoxDefaultButton.Button1,MessageBoxOptions.DefaultDesktopOnly,false);
-				System.Environment.Exit(1);
+			    AccountsList.Items.AddRange(Accounts.Keys.ToArray());
 			}
+			else
+			{
+			    MessageBox.Show("Accounts not found.Let's authenticate your first account.");
+			    AccountManager m = new AccountManager(Accounts);
+			    m.ShowDialog();
+			    if (m.Change)
+			    {
+			        Accounts.Clear();
+			        AccountsList.Items.Clear();
+			        Accounts = AccountReader.Read("Settings/Accounts.dat");
+			        if (Accounts.Count != 0)
+			        {
+			            AccountsList.Items.AddRange(Accounts.Keys.ToArray());
+			            AccountsList.SelectedIndex = 0;
+			        }
+			    }
+			}
+			var f = ColumnReader.Load(this);
+			for (int i = 0; i < f.Length; i++)
+			{
+			    f[i].TopLevel = false;
+			    f[i].TopMost = false;
+			    f[i].Fresh = false;
+			    f[i].Parent = this;
+			    f[i].Show();
+			    f[i].Size = new Size(240, this.Size.Height - 160);
+			    f[i].Text = f[i].Text.Remove(0,3);
+			    f[i].Text = i + ": " + f[i].Text;
+			    f[i].Location = new Point(240 * i, f[i].Fresh ? 0 : 27);
+			    f[i].Size = new Size(240, this.Size.Height - 160);
+			    Columns.Add(f[i]);
+			}
+			twitterDo = new TwitterDo(this);
 		}
 		public int CheckLatestVersion()
 		{

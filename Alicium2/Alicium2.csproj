@@ -61,7 +61,7 @@
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Newtonsoft.Json">
-      <HintPath>bin\Debug\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.4.5.5\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -72,10 +72,13 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Twitterizer2">
-      <HintPath>bin\Debug\Twitterizer2.dll</HintPath>
+      <HintPath>..\packages\twitterizer.2.4.1.2-alpha\lib\net40\Twitterizer2.dll</HintPath>
+    </Reference>
+    <Reference Include="Twitterizer2.Asynchronous">
+      <HintPath>..\packages\twitterizer.2.4.1.2-alpha\lib\net40\Twitterizer2.Asynchronous.dll</HintPath>
     </Reference>
     <Reference Include="Twitterizer2.Streaming">
-      <HintPath>bin\Debug\Twitterizer2.Streaming.dll</HintPath>
+      <HintPath>..\packages\twitterizer.2.4.1.2-alpha\lib\net40\Twitterizer2.Streaming.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -166,6 +169,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.config" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
