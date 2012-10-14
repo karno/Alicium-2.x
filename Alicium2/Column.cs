@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -377,8 +376,10 @@ namespace Alicium2
         private void Column_FormClosed(object sender, FormClosedEventArgs e)
         {
             if (back != null)
+            {
                 File.Delete("Settings/" + this.Text.ToCharArray()[0] + ".bmp");
-            back.Dispose();
+                back.Dispose();
+            }
             Columns.Remove(this);
         }
 
