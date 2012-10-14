@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Net;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Twitterizer;
 using Twitterizer.Streaming;
@@ -36,6 +36,7 @@ namespace Alicium2
 		{
 			InitializeComponent();
 			if (version < CheckLatestVersion())
+<<<<<<< HEAD
 			{
 			    MessageBox.Show("There is an update.");
 			}
@@ -76,6 +77,48 @@ namespace Alicium2
 			    f[i].Size = new Size(240, this.Size.Height - 160);
 			    Columns.Add(f[i]);
 			}
+=======
+			{
+			    MessageBox.Show("There is an update.");
+			}
+			Accounts = AccountReader.Read("Settings/Accounts.dat");
+			if (Accounts.Count != 0)
+			{
+			    AccountsList.Items.AddRange(Accounts.Keys.ToArray());
+			}
+			else
+			{
+			    MessageBox.Show("Accounts not found.Let's authenticate your first account.");
+			    AccountManager m = new AccountManager(Accounts);
+			    m.ShowDialog();
+			    if (m.Change)
+			    {
+			        Accounts.Clear();
+			        AccountsList.Items.Clear();
+			        Accounts = AccountReader.Read("Settings/Accounts.dat");
+			        if (Accounts.Count != 0)
+			        {
+			            AccountsList.Items.AddRange(Accounts.Keys.ToArray());
+			            AccountsList.SelectedIndex = 0;
+			        }
+			    }
+			}
+			var f = ColumnReader.Load(this);
+			for (int i = 0; i < f.Length; i++)
+			{
+			    f[i].TopLevel = false;
+			    f[i].TopMost = false;
+			    f[i].Fresh = false;
+			    f[i].Parent = this;
+			    f[i].Show();
+			    f[i].Size = new Size(240, this.Size.Height - 160);
+			    f[i].Text = f[i].Text.Remove(0,3);
+			    f[i].Text = i + ": " + f[i].Text;
+			    f[i].Location = new Point(240 * i, f[i].Fresh ? 0 : 27);
+			    f[i].Size = new Size(240, this.Size.Height - 160);
+			    Columns.Add(f[i]);
+			}
+>>>>>>> merge
 			twitterDo = new TwitterDo(this);
 		}
 		public int CheckLatestVersion()
@@ -359,20 +402,19 @@ namespace Alicium2
 			}
 			else
 			{
-				var th = new System.Threading.Thread(new System.Threading.ThreadStart(() =>
-				                                                                      {
-				                                                                      	Invoke(new Action(() =>
-				                                                                      	                  {
-				                                                                      	                  	ActiveStatusView.SmallImageList = new ImageList();
-				                                                                      	                  }));
-				                                                                      	var i = new ListViewItem(new[] { "null", "null" });
-				                                                                      	Invoke(new Action(() =>
-				                                                                      	                  {
-				                                                                      	                  	ActiveStatusView.Items.Clear();
-				                                                                      	                  	ActiveStatusView.Items.Add(i);
-				                                                                      	                  }));
-				                                                                      }));
-				th.Start();
+                new Task(() =>
+                {
+                    Invoke(new Action(() =>
+                    {
+                        ActiveStatusView.SmallImageList = new ImageList();
+                    }));
+                    var i = new ListViewItem(new[] { "null", "null" });
+                    Invoke(new Action(() =>
+                    {
+                        ActiveStatusView.Items.Clear();
+                        ActiveStatusView.Items.Add(i);
+                    }));
+                }).Start();
 			}
 		}
 		public static void ActivateColumn(int index)

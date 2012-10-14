@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
 using Twitterizer;
-using System.Threading;
 using System.IO;
 using RcLibCs;
 
@@ -12,7 +11,7 @@ namespace Alicium2
 {
 	public class TwitterDo
 	{
-		Main m;
+		private readonly Main m;
 		public TwitterDo(Main _m)
 		{
 			m = _m;
@@ -144,7 +143,12 @@ namespace Alicium2
 
 		public static Dictionary<string, ExtendedOAuthTokens> Read(string path)
 		{
-			var d = new Dictionary<string, ExtendedOAuthTokens>();
+            if (!File.Exists(path))
+            {
+                new FileInfo(path).Directory.Create();
+                File.Create(path).Dispose();
+            }
+		    var d = new Dictionary<string, ExtendedOAuthTokens>();
 			var read = Rc.CutString(";", Rc.loadData(path));
 			foreach (var s in read)
 			{
