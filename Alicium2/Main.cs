@@ -6,6 +6,7 @@ using System.Net;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Twitterizer;
 using Twitterizer.Streaming;
@@ -358,20 +359,19 @@ namespace Alicium2
 			}
 			else
 			{
-				var th = new System.Threading.Thread(new System.Threading.ThreadStart(() =>
-				                                                                      {
-				                                                                      	Invoke(new Action(() =>
-				                                                                      	                  {
-				                                                                      	                  	ActiveStatusView.SmallImageList = new ImageList();
-				                                                                      	                  }));
-				                                                                      	var i = new ListViewItem(new[] { "null", "null" });
-				                                                                      	Invoke(new Action(() =>
-				                                                                      	                  {
-				                                                                      	                  	ActiveStatusView.Items.Clear();
-				                                                                      	                  	ActiveStatusView.Items.Add(i);
-				                                                                      	                  }));
-				                                                                      }));
-				th.Start();
+                new Task(() =>
+                {
+                    Invoke(new Action(() =>
+                    {
+                        ActiveStatusView.SmallImageList = new ImageList();
+                    }));
+                    var i = new ListViewItem(new[] { "null", "null" });
+                    Invoke(new Action(() =>
+                    {
+                        ActiveStatusView.Items.Clear();
+                        ActiveStatusView.Items.Add(i);
+                    }));
+                }).Start();
 			}
 		}
 		public static void ActivateColumn(int index)
