@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
 using Twitterizer;
-using System.Threading;
 using System.IO;
 using RcLibCs;
 
@@ -12,7 +11,7 @@ namespace Alicium2
 {
 	public class TwitterDo
 	{
-		Main m;
+		private readonly Main m;
 		public TwitterDo(Main _m)
 		{
 			m = _m;
