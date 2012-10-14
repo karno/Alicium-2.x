@@ -376,8 +376,10 @@ namespace Alicium2
         private void Column_FormClosed(object sender, FormClosedEventArgs e)
         {
             if (back != null)
+            {
                 File.Delete("Settings/" + this.Text.ToCharArray()[0] + ".bmp");
-            back.Dispose();
+                back.Dispose();
+            }
             Columns.Remove(this);
         }
 

@@ -141,27 +141,24 @@ namespace Alicium2
 	public static class AccountReader
 	{
 
-        public static Dictionary<string, ExtendedOAuthTokens> Read(string path)
-        {
-            if (File.Exists(path))
+		public static Dictionary<string, ExtendedOAuthTokens> Read(string path)
+		{
+            if (!File.Exists(path))
             {
-                var d = new Dictionary<string, ExtendedOAuthTokens>();
-                var read = Rc.CutString(";", Rc.loadData(path));
-                foreach (var s in read)
-                {
-                    var add = new ExtendedOAuthTokens().Create(Rc.CutString(",", s)[1], Rc.CutString(",", s)[2],
-                                                               Rc.CutString(",", s)[0]);
-                    d[Rc.CutString(",", s)[0]] = add;
-                }
-                return d;
+                new FileInfo(path).Directory.Create();
+                File.Create(path).Dispose();
             }
-            else
-            {
-                return new Dictionary<string, ExtendedOAuthTokens>();
-            }
-        }
+		    var d = new Dictionary<string, ExtendedOAuthTokens>();
+			var read = Rc.CutString(";", Rc.loadData(path));
+			foreach (var s in read)
+			{
+				var add = new ExtendedOAuthTokens().Create(Rc.CutString(",", s)[1], Rc.CutString(",", s)[2], Rc.CutString(",", s)[0]);
+				d[Rc.CutString(",", s)[0]] = add;
+			}
+			return d;
+		}
 
-	    public static bool Save(Dictionary<string, ExtendedOAuthTokens> d, string path)
+		public static bool Save(Dictionary<string, ExtendedOAuthTokens> d, string path)
 		{
 			try
 			{
