@@ -1,6 +1,6 @@
 ﻿namespace Alicium2
 {
-    partial class MariariConsole
+    partial class ConsoleClone
     {
         /// <summary>
         /// 必要なデザイナー変数です。
@@ -28,10 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MariariConsole));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConsoleClone));
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.textBox2 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // textBox1
@@ -44,24 +43,29 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBox1.Size = new System.Drawing.Size(284, 285);
+            this.textBox1.Size = new System.Drawing.Size(485, 512);
             this.textBox1.TabIndex = 0;
-            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
-            // timer1
+            // textBox2
             // 
-            this.timer1.Enabled = true;
-            this.timer1.Interval = 10;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox2.BackColor = System.Drawing.Color.Black;
+            this.textBox2.ForeColor = System.Drawing.Color.White;
+            this.textBox2.Location = new System.Drawing.Point(0, 492);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(465, 20);
+            this.textBox2.TabIndex = 1;
             // 
-            // MariariConsole
+            // ConsoleClone
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 285);
+            this.ClientSize = new System.Drawing.Size(485, 512);
+            this.Controls.Add(this.textBox2);
             this.Controls.Add(this.textBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "MariariConsole";
+            this.Name = "ConsoleClone";
             this.Text = "AlConsole";
             this.Load += new System.EventHandler(this.MariariConsole_Load);
             this.ResumeLayout(false);
@@ -72,6 +76,6 @@
         #endregion
 
         private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.TextBox textBox2;
     }
 }

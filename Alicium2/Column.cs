@@ -192,11 +192,13 @@ namespace Alicium2
                 active = value;
                 if (!active)
                 {
-                    listView1.BackColor = Color.WhiteSmoke;
+                    listView1.BackColor = Color.Silver;
+                    statusStrip1.BackColor = Color.Silver;
                 }
                 else
                 {
-                    listView1.BackColor = Color.Azure;
+                    listView1.BackColor = Color.AliceBlue;
+                    statusStrip1.BackColor = Color.AliceBlue;
                 }
             }
         }
@@ -361,30 +363,21 @@ namespace Alicium2
             else
             {
                 var save = "Settings/" + this.Text[0] + ".bmp";
-                try
+                //try
                 {
-                    using (var str = new FileStream(save, FileMode.OpenOrCreate, FileAccess.Write))
+                    /*using (var str = new FileStream(save, FileMode.OpenOrCreate, FileAccess.Write))
                     {
                         back.Save(str, ImageFormat.Png);
-                    }
+                    }*/
+                    back.Save(save);
                 }
-                catch { } // 握りつぶす
+                //catch { } // 握りつぶす
                 return new ColumnData() { AccountName = TwitterAccount.VerifyCredentials(ts.Tokens).ResponseObject.ScreenName, Tille = this.Text, Track = _Track, Follow = _Follow, ColumnType = st, Image = "Settings/" + this.Text[0] + ".bmp" };
             }
         }
 
         private void Column_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (back != null)
-<<<<<<< HEAD
-                File.Delete("Settings/" + this.Text.ToCharArray()[0] + ".bmp");
-            back.Dispose();
-=======
-            {
-                File.Delete("Settings/" + this.Text.ToCharArray()[0] + ".bmp");
-                back.Dispose();
-            }
->>>>>>> merge
             Columns.Remove(this);
         }
 

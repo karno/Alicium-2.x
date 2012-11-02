@@ -47,9 +47,9 @@ namespace Alicium2
             // 
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
             this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
-            this.pictureBox1.Location = new System.Drawing.Point(32, 12);
+            this.pictureBox1.Location = new System.Drawing.Point(12, 13);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(317, 166);
+            this.pictureBox1.Size = new System.Drawing.Size(361, 187);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
@@ -57,18 +57,18 @@ namespace Alicium2
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(33, 181);
+            this.label1.Location = new System.Drawing.Point(33, 196);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(316, 108);
+            this.label1.Size = new System.Drawing.Size(316, 117);
             this.label1.TabIndex = 1;
             this.label1.Text = "Alicium 2.0\r\n\r\n(c)Canno 2012\r\n\r\nSurpport : Twitter @a1cn\r\n                       " +
                 "     or\r\n             http://cannotdebug.blog.fc2.com/";
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(278, 237);
+            this.button1.Location = new System.Drawing.Point(278, 257);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(71, 38);
+            this.button1.Size = new System.Drawing.Size(71, 41);
             this.button1.TabIndex = 2;
             this.button1.Text = "OK";
             this.button1.UseVisualStyleBackColor = true;
@@ -76,9 +76,9 @@ namespace Alicium2
             // 
             // About
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(385, 287);
+            this.ClientSize = new System.Drawing.Size(385, 311);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pictureBox1);

@@ -15,6 +15,6 @@ namespace Alicium2
 		void Button1Click(object sender, EventArgs e)
 		{
 			this.Close();
-		}
+        }
 	}
 }

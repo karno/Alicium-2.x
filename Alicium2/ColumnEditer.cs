@@ -67,7 +67,7 @@ namespace Alicium2
 		{
 			if (textBox1.Text != "" && AccountList.SelectedItem != null)
 			{
-				if (type == 2)
+                if (type == 2 && textBox3.Text != "")
 				{
 					opt.Follow.AddRange(textBox2.Lines);
 					opt.Track.AddRange(textBox3.Lines);
