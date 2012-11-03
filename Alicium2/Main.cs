@@ -16,22 +16,22 @@ namespace Alicium2
 {
 	public partial class Main : Form
 	{
-        public ExtendedOAuthTokens[] NowTokens
-        {
-            get
-            {
-                return (ExtendedOAuthTokens[])Invoke(new Func<ExtendedOAuthTokens[]>(() =>
-                {
-                    return Accounts.Values.ToList().Where((t) => AccountsList.SelectedItems.Contains(t.UserName)).ToArray();
-                }));
-            }
-        }
+		public ExtendedOAuthTokens[] NowTokens
+		{
+			get
+			{
+				return (ExtendedOAuthTokens[])Invoke(new Func<ExtendedOAuthTokens[]>(() =>
+				                                                                     {
+				                                                                     	return Accounts.Values.ToList().Where((t) => AccountsList.SelectedItems.Contains(t.UserName)).ToArray();
+				                                                                     }));
+			}
+		}
 		int version = 1100;
-        TwitterDo twitterDo;
+		TwitterDo twitterDo;
 		public static List<Column> Columns = new List<Column>();
 		public static Column ActiveColumn;
 		public static TwitterStatus ActiveStatus;
-        public static bool Selected = true;
+		public static bool Selected = true;
 		public Dictionary<string, ExtendedOAuthTokens> Accounts = new Dictionary<string, ExtendedOAuthTokens>();
 		int CommandCount = 0;
 		string Command = "";
@@ -39,77 +39,84 @@ namespace Alicium2
 
 		public Main()
 		{
-            using (var sp = new Sprash())
-            {
-                sp.Show();
-                InitializeComponent();
-                if (version < CheckLatestVersion())
-                {
-                    MessageBox.Show("There is an update.");
-                    System.Diagnostics.Process.Start("https://github.com/a1cn/Alicium-2.x/downloads");
-                }
-                Accounts = AccountReader.Read("Settings/Accounts.dat");
-                if (Accounts.Count != 0)
-                {
-                    AccountsList.Items.AddRange(Accounts.Keys.ToArray());
-                }
-                else
-                {
-                    MessageBox.Show("Accounts not found.Let's authenticate your first account.");
-                    AccountManager m = new AccountManager(Accounts);
-                    m.ShowDialog();
-                    if (m.Change)
-                    {
-                        Accounts.Clear();
-                        AccountsList.Items.Clear();
-                        Accounts = AccountReader.Read("Settings/Accounts.dat");
-                        if (Accounts.Count != 0)
-                        {
-                            AccountsList.Items.AddRange(Accounts.Keys.ToArray());
-                            AccountsList.SelectedIndex = 0;
-                        }
-                    }
-                }
-                var f = ColumnReader.Load(this);
-                for (int i = 0; i < f.Length; i++)
-                {
-                    f[i].TopLevel = false;
-                    f[i].TopMost = false;
-                    f[i].Fresh = false;
-                    f[i].Parent = this;
-                    f[i].Show();
-                    f[i].Size = new Size(240, this.Size.Height - 160);
-                    f[i].Text = f[i].Text.Remove(0, 3);
-                    f[i].Text = i + ": " + f[i].Text;
-                    f[i].Location = new Point(240 * i, f[i].Fresh ? 0 : 27);
-                    f[i].Size = new Size(240, this.Size.Height - 160);
-                    Columns.Add(f[i]);
-                }
-                twitterDo = new TwitterDo(this);
-                sp.Close();
-            }
+			using (var sp = new Sprash())
+			{
+				sp.Show();
+				InitializeComponent();
+				if (version < CheckLatestVersion())
+				{
+					MessageBox.Show("There is an update.");
+					System.Diagnostics.Process.Start("https://github.com/a1cn/Alicium-2.x/downloads");
+				}
+				Accounts = AccountReader.Read("Settings/Accounts.dat");
+				if (Accounts.Count != 0)
+				{
+					AccountsList.Items.AddRange(Accounts.Keys.ToArray());
+				}
+				else
+				{
+					MessageBox.Show("Accounts not found.Let's authenticate your first account.");
+					AccountManager m = new AccountManager(Accounts);
+					m.ShowDialog();
+					if (m.Change)
+					{
+						Accounts.Clear();
+						AccountsList.Items.Clear();
+						Accounts = AccountReader.Read("Settings/Accounts.dat");
+						if (Accounts.Count != 0)
+						{
+							AccountsList.Items.AddRange(Accounts.Keys.ToArray());
+							AccountsList.SelectedIndex = 0;
+						}
+					}
+				}
+				var f = ColumnReader.Load(this);
+				for (int i = 0; i < f.Length; i++)
+				{
+					f[i].TopLevel = false;
+					f[i].TopMost = false;
+					f[i].Fresh = false;
+					f[i].Parent = this;
+					f[i].Show();
+					f[i].Size = new Size(240, this.Size.Height - 160);
+					f[i].Text = f[i].Text.Remove(0, 3);
+					f[i].Text = i + ": " + f[i].Text;
+					f[i].Location = new Point(240 * i, f[i].Fresh ? 0 : 27);
+					f[i].Size = new Size(240, this.Size.Height - 160);
+					Columns.Add(f[i]);
+				}
+				twitterDo = new TwitterDo(this);
+				sp.Close();
+			}
 		}
 		public int CheckLatestVersion()
 		{
-            try
-            {
-                WebClient webClient = new WebClient();
-                Stream stream = webClient.OpenRead("http://cannotdebug.blog.fc2.com/blog-entry-9.html");
-                Encoding encoding = Encoding.GetEncoding("UTF-8");
-                StreamReader streamReader = new StreamReader(stream, encoding);
-                string text = streamReader.ReadToEnd();
-                streamReader.Close();
-                stream.Close();
-                int num = text.IndexOf("最新バージョンは[", 0);
-                string text2 = text.Substring(num + 9, 7);
-                return int.Parse(text2.Replace(".", ""));
-            }
-            catch
-            {
-                MessageBox.Show("Please check internet connection.");
-                System.Environment.Exit(1);
-                return 0;
-            }
+			try
+			{
+				WebClient webClient = new WebClient();
+				Stream stream = webClient.OpenRead("http://cannotdebug.blog.fc2.com/blog-entry-9.html");
+				Encoding encoding = Encoding.GetEncoding("UTF-8");
+				StreamReader streamReader = new StreamReader(stream, encoding);
+				string text = streamReader.ReadToEnd();
+				streamReader.Close();
+				stream.Close();
+				int num = text.IndexOf("最新バージョンは[", 0);
+				string text2 = text.Substring(num + 9, 7);
+				return int.Parse(text2.Replace(".", ""));
+			}
+			catch
+			{
+				switch(MessageBox.Show("Internet connection shouldn't be enabled.","Failed to check a latest version",MessageBoxButtons.AbortRetryIgnore,MessageBoxIcon.Error,MessageBoxDefaultButton.Button1))
+				{
+					case DialogResult.Abort:
+						System.Environment.Exit(0);
+						return 0;
+					case DialogResult.Retry:
+						return CheckLatestVersion();
+					default:
+						return 0;
+				}
+			}
 		}
 		private void Main_Load(object sender, EventArgs e)
 		{
@@ -202,29 +209,29 @@ namespace Alicium2
 			{
 				if (e.Control && e.KeyCode == Keys.Enter)
 				{
-                    if (CodeDo())
-                    {
-                        PostText.Text = "";
-                        CommandHandled = true;
-                    }
-                    else if (AccountsList.SelectedItems.Count != 0)
-                    {
-                        if (ActiveStatus == null)
-                        {
-                            twitterDo.Post(PostText.Text);
-                            PostText.Text = "";
-                        }
-                        else
-                        {
-                            twitterDo.Post(PostText.Text, ActiveStatus);
-                            PostText.Text = "";
-                        }
-                        Tweeted = true;
-                    }
-                    else
-                    {
-                        MConsole.WriteLine("You haven't selected any accounts.");
-                    }
+					if (CodeDo())
+					{
+						PostText.Text = "";
+						CommandHandled = true;
+					}
+					else if (AccountsList.SelectedItems.Count != 0)
+					{
+						if (ActiveStatus == null)
+						{
+							twitterDo.Post(PostText.Text);
+							PostText.Text = "";
+						}
+						else
+						{
+							twitterDo.Post(PostText.Text, ActiveStatus);
+							PostText.Text = "";
+						}
+						Tweeted = true;
+					}
+					else
+					{
+						MConsole.WriteLine("You haven't selected any accounts.");
+					}
 				}
 				else if (e.Control && e.KeyCode == Keys.F)
 				{
@@ -240,41 +247,41 @@ namespace Alicium2
 						twitterDo.Retweet(ActiveStatus);
 					}
 				}
-                else if (e.Control && e.KeyCode == Keys.Q)
-                {
-                    if (ActiveStatus != null)
-                    {
-                        PostText.Text = "RT @" + ActiveStatus.User.ScreenName + ": " + ActiveStatus.Text;
-                        PostText.Select(0, 0);
-                    }
-                }
-                else if (e.Control && e.KeyCode == Keys.U)
-                {
-                    if (ActiveStatus != null && NowTokens.Length != 0)
-                    {
-                        new UserView(ActiveStatus.User.ScreenName, NowTokens.First().OAuthTokens).Show();
-                    }
-                    else
-                    {
-                        MConsole.WriteLine("You haven't selected any accounts.");
-                    }
-                }
-                else if (e.Control && e.KeyCode == Keys.C)
-                {
-                    IsCommandMode = true;
-                    PostText.Text = @"Command Mode
+				else if (e.Control && e.KeyCode == Keys.Q)
+				{
+					if (ActiveStatus != null)
+					{
+						PostText.Text = "RT @" + ActiveStatus.User.ScreenName + ": " + ActiveStatus.Text;
+						PostText.Select(0, 0);
+					}
+				}
+				else if (e.Control && e.KeyCode == Keys.U)
+				{
+					if (ActiveStatus != null && NowTokens.Length != 0)
+					{
+						new UserView(ActiveStatus.User.ScreenName, NowTokens.First().OAuthTokens).Show();
+					}
+					else
+					{
+						MConsole.WriteLine("You haven't selected any accounts.");
+					}
+				}
+				else if (e.Control && e.KeyCode == Keys.C)
+				{
+					IsCommandMode = true;
+					PostText.Text = @"Command Mode
 ";
-                    MConsole.WriteLine(ActiveColumn == null ? "c[Number] ... Activate the [Number]th column" : " [Number] ... Activate the [Number]th Tweet from Column that is activated");
-                    PostText.ReadOnly = true;
-                }
-                else if (e.KeyCode == Keys.Delete)
-                {
-                    ActiveStatus = null;
-                    ShowActiveStatus();
-                    Command = "";
-                    PostText.Text = "";
-                    MConsole.WriteLine("Ready");
-                }
+					MConsole.WriteLine(ActiveColumn == null ? "c[Number] ... Activate the [Number]th column" : " [Number] ... Activate the [Number]th Tweet from Column that is activated");
+					PostText.ReadOnly = true;
+				}
+				else if (e.KeyCode == Keys.Delete)
+				{
+					ActiveStatus = null;
+					ShowActiveStatus();
+					Command = "";
+					PostText.Text = "";
+					MConsole.WriteLine("Ready");
+				}
 			}
 			else
 			{
@@ -403,19 +410,19 @@ namespace Alicium2
 			}
 			else
 			{
-                new Task(() =>
-                {
-                    Invoke(new Action(() =>
-                    {
-                        ActiveStatusView.SmallImageList = new ImageList();
-                    }));
-                    var i = new ListViewItem(new[] { "null", "null" });
-                    Invoke(new Action(() =>
-                    {
-                        ActiveStatusView.Items.Clear();
-                        ActiveStatusView.Items.Add(i);
-                    }));
-                }).Start();
+				new Task(() =>
+				         {
+				         	Invoke(new Action(() =>
+				         	                  {
+				         	                  	ActiveStatusView.SmallImageList = new ImageList();
+				         	                  }));
+				         	var i = new ListViewItem(new[] { "null", "null" });
+				         	Invoke(new Action(() =>
+				         	                  {
+				         	                  	ActiveStatusView.Items.Clear();
+				         	                  	ActiveStatusView.Items.Add(i);
+				         	                  }));
+				         }).Start();
 			}
 		}
 		public static void ActivateColumn(int index)
@@ -431,21 +438,21 @@ namespace Alicium2
 		{
 			if (CommandHandled || Tweeted)
 			{
-                try
-                {
-                    PostText.SelectionStart--;
-                    PostText.Text = PostText.Text.Remove(PostText.SelectionStart, 1);
-                    PostText.Text = PostText.Text.Replace("\n", "").Replace("\r", "");
-                    PostText.SelectionStart = PostText.Text.Length;
-                    PostText.Update();
-                }
-                catch
-                {
-                }
-                finally
-                {
-                    CommandHandled = Tweeted = false;
-                }
+				try
+				{
+					PostText.SelectionStart--;
+					PostText.Text = PostText.Text.Remove(PostText.SelectionStart, 1);
+					PostText.Text = PostText.Text.Replace("\n", "").Replace("\r", "");
+					PostText.SelectionStart = PostText.Text.Length;
+					PostText.Update();
+				}
+				catch
+				{
+				}
+				finally
+				{
+					CommandHandled = Tweeted = false;
+				}
 			}
 		}
 
@@ -486,113 +493,113 @@ namespace Alicium2
 				twitterDo.Favorite(ActiveStatus);
 			}
 		}
-        private bool CodeDo()
-        {
-            /*
-             * //TEMP:
+		private bool CodeDo()
+		{
+			/*
+			 * //TEMP:
 else if (PostText.Text == "/" || PostText.Text == "/")
             {
                 return true;
             }
- */
-            if (PostText.Text == "/exit" || PostText.Text == "/e")
-            {
-                this.Close();
-                return true;
-            }
-            else if (PostText.Text == "/halt" || PostText.Text == "/h")
-            {
-                System.Environment.Exit(0);
-                return true;
-            }
-            else if (PostText.Text == "/account" || PostText.Text == "/a")
-            {
-                AccountManager m = new AccountManager(Accounts);
-                m.ShowDialog();
-                if (m.Change)
-                {
-                    Accounts.Clear();
-                    AccountsList.Items.Clear();
-                    Accounts = AccountReader.Read("Settings/Accounts.dat");
-                    if (Accounts.Count != 0)
-                    {
-                        AccountsList.Items.AddRange(Accounts.Keys.ToArray());
-                    }
-                }
-                return true;
-            }
-            else if (PostText.Text == "/mariari" || PostText.Text == "/m")
-            {
-                twitterDo.MultiPoster(Mariari.Yakkai);
-                return true;
-            }
-            else if (PostText.Text == "/cannon" || PostText.Text == "/c")
-            {
-                twitterDo.MultiPoster(Mariari.Cannon);
-                return true;
-            }
-            else if (PostText.Text == "/stealth" || PostText.Text == "/s")
-            {
-                twitterDo.Post(Mariari.Stealth);
-                return true;
-            }
-            else if (PostText.Text == "/boss" || PostText.Text == "/b")
-            {
-                this.WindowState = FormWindowState.Minimized;
-                this.ShowInTaskbar = false;
-                if (MessageBox.Show("上書きしますか？","確認",MessageBoxButtons.OKCancel,MessageBoxIcon.Question,MessageBoxDefaultButton.Button2) == System.Windows.Forms.DialogResult.Cancel)
-                {
-                    this.WindowState = FormWindowState.Normal;
-                    this.ShowInTaskbar = true;
-                }
-                else
-                {
-                    System.Environment.Exit(0);
-                }
-                return true;
-            }
-            else if (PostText.Text.Contains("/user ") || PostText.Text.Contains("/u "))
-            {
-                if (NowTokens.Length != 0)
-                {
-                    string view = PostText.Text.Replace("/user ", "").Replace("/u ", "");
-                    try
-                    {
-                        new UserView(view, NowTokens.First().OAuthTokens).Show();
-                    }
-                    catch { }
-                }
-                else
-                {
-                    MConsole.WriteLine("You haven't selected any accounts.");
-                }
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+			 */
+			if (PostText.Text == "/exit" || PostText.Text == "/e")
+			{
+				this.Close();
+				return true;
+			}
+			else if (PostText.Text == "/halt" || PostText.Text == "/h")
+			{
+				System.Environment.Exit(0);
+				return true;
+			}
+			else if (PostText.Text == "/account" || PostText.Text == "/a")
+			{
+				AccountManager m = new AccountManager(Accounts);
+				m.ShowDialog();
+				if (m.Change)
+				{
+					Accounts.Clear();
+					AccountsList.Items.Clear();
+					Accounts = AccountReader.Read("Settings/Accounts.dat");
+					if (Accounts.Count != 0)
+					{
+						AccountsList.Items.AddRange(Accounts.Keys.ToArray());
+					}
+				}
+				return true;
+			}
+			else if (PostText.Text == "/mariari" || PostText.Text == "/m")
+			{
+				twitterDo.MultiPoster(Mariari.Yakkai);
+				return true;
+			}
+			else if (PostText.Text == "/cannon" || PostText.Text == "/c")
+			{
+				twitterDo.MultiPoster(Mariari.Cannon);
+				return true;
+			}
+			else if (PostText.Text == "/stealth" || PostText.Text == "/s")
+			{
+				twitterDo.Post(Mariari.Stealth);
+				return true;
+			}
+			else if (PostText.Text == "/boss" || PostText.Text == "/b")
+			{
+				this.WindowState = FormWindowState.Minimized;
+				this.ShowInTaskbar = false;
+				if (MessageBox.Show("上書きしますか？","確認",MessageBoxButtons.OKCancel,MessageBoxIcon.Question,MessageBoxDefaultButton.Button2) == System.Windows.Forms.DialogResult.Cancel)
+				{
+					this.WindowState = FormWindowState.Normal;
+					this.ShowInTaskbar = true;
+				}
+				else
+				{
+					System.Environment.Exit(0);
+				}
+				return true;
+			}
+			else if (PostText.Text.Contains("/user ") || PostText.Text.Contains("/u "))
+			{
+				if (NowTokens.Length != 0)
+				{
+					string view = PostText.Text.Replace("/user ", "").Replace("/u ", "");
+					try
+					{
+						new UserView(view, NowTokens.First().OAuthTokens).Show();
+					}
+					catch { }
+				}
+				else
+				{
+					MConsole.WriteLine("You haven't selected any accounts.");
+				}
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
 
-        private void UORTButton_Click(object sender, EventArgs e)
-        {
-            if (ActiveStatus != null)
-            {
-                PostText.Text = "RT @" + ActiveStatus.User.ScreenName + ": " + ActiveStatus.Text;
-                PostText.Select(0, 0);
-            }
-        }
+		private void UORTButton_Click(object sender, EventArgs e)
+		{
+			if (ActiveStatus != null)
+			{
+				PostText.Text = "RT @" + ActiveStatus.User.ScreenName + ": " + ActiveStatus.Text;
+				PostText.Select(0, 0);
+			}
+		}
 
-        private void UserViewButton_Click(object sender, EventArgs e)
-        {
-            if (ActiveStatus != null && NowTokens.Length != 0)
-            {
-                new UserView(ActiveStatus.User.ScreenName, NowTokens.First().OAuthTokens).Show();
-            }
-            else
-            {
-                MConsole.WriteLine("You haven't selected any accounts.");
-            }
-        }
+		private void UserViewButton_Click(object sender, EventArgs e)
+		{
+			if (ActiveStatus != null && NowTokens.Length != 0)
+			{
+				new UserView(ActiveStatus.User.ScreenName, NowTokens.First().OAuthTokens).Show();
+			}
+			else
+			{
+				MConsole.WriteLine("You haven't selected any accounts.");
+			}
+		}
 	}
 }
