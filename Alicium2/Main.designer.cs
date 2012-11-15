@@ -133,7 +133,7 @@
         	// addToolStripMenuItem
         	// 
         	this.addToolStripMenuItem.Name = "addToolStripMenuItem";
-        	this.addToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+        	this.addToolStripMenuItem.Size = new System.Drawing.Size(90, 22);
         	this.addToolStripMenuItem.Text = "Add";
         	this.addToolStripMenuItem.Click += new System.EventHandler(this.addToolStripMenuItem_Click);
         	// 
@@ -148,7 +148,7 @@
         	// aboutToolStripMenuItem
         	// 
         	this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-        	this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+        	this.aboutToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
         	this.aboutToolStripMenuItem.Text = "About";
         	this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolStripMenuItemClick);
         	// 
@@ -261,6 +261,8 @@
         	this.ActiveStatusView.TabIndex = 4;
         	this.ActiveStatusView.UseCompatibleStateImageBehavior = false;
         	this.ActiveStatusView.View = System.Windows.Forms.View.Details;
+        	this.ActiveStatusView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.ActiveStatusViewColumnClick);
+        	this.ActiveStatusView.SelectedIndexChanged += new System.EventHandler(this.ActiveStatusViewSelectedIndexChanged);
         	// 
         	// User
         	// 
@@ -334,7 +336,7 @@
         	this.MainMenuStrip = this.menuStrip1;
         	this.MinimumSize = new System.Drawing.Size(640, 446);
         	this.Name = "Main";
-        	this.Text = "Alicium 2.1";
+        	this.Text = "Alicium 2.1.1";
         	this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Main_FormClosed);
         	this.Load += new System.EventHandler(this.Main_Load);
         	this.statusStrip.ResumeLayout(false);

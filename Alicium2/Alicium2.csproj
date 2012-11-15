@@ -165,6 +165,10 @@
     <Compile Include="Sprash.designer.cs">
       <DependentUpon>Sprash.cs</DependentUpon>
     </Compile>
+    <Compile Include="TweetViewer.cs" />
+    <Compile Include="TweetViewer.Designer.cs">
+      <DependentUpon>TweetViewer.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -210,6 +214,9 @@
     </Compile>
     <EmbeddedResource Include="Sprash.resx">
       <DependentUpon>Sprash.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TweetViewer.resx">
+      <DependentUpon>TweetViewer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserView.resx">
       <DependentUpon>UserView.cs</DependentUpon>

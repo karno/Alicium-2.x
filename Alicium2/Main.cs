@@ -26,7 +26,7 @@ namespace Alicium2
 				                                                                     }));
 			}
 		}
-		int version = 1100;
+		int version = 1110;
 		TwitterDo twitterDo;
 		public static List<Column> Columns = new List<Column>();
 		public static Column ActiveColumn;
@@ -45,8 +45,10 @@ namespace Alicium2
 				InitializeComponent();
 				if (version < CheckLatestVersion())
 				{
+					sp.Close();
 					MessageBox.Show("There is an update.");
 					System.Diagnostics.Process.Start("https://github.com/a1cn/Alicium-2.x/downloads");
+					System.Environment.Exit(0);
 				}
 				Accounts = AccountReader.Read("Settings/Accounts.dat");
 				if (Accounts.Count != 0)
@@ -55,8 +57,9 @@ namespace Alicium2
 				}
 				else
 				{
+					sp.Close();
 					MessageBox.Show("Accounts not found.Let's authenticate your first account.");
-					AccountManager m = new AccountManager(Accounts);
+					var m = new AccountManager(Accounts);
 					m.ShowDialog();
 					if (m.Change)
 					{
@@ -86,7 +89,11 @@ namespace Alicium2
 					Columns.Add(f[i]);
 				}
 				twitterDo = new TwitterDo(this);
-				sp.Close();
+				try
+				{
+					sp.Close();
+				}
+				catch{}
 			}
 		}
 		public int CheckLatestVersion()
@@ -193,7 +200,7 @@ namespace Alicium2
 		private void Main_FormClosed(object sender, FormClosedEventArgs e)
 		{
 			bool b = ColumnReader.Save(Columns.ToArray());
-			bool c = AccountReader.Save(Accounts, "Settings/Accounts.dat");
+			bool c = AccountReader.Save(Accounts, Application.StartupPath + "/Settings/Accounts.dat");
 			if(!b||!c)
 			{
 				MessageBox.Show("Failed to save your data.");
@@ -266,7 +273,7 @@ namespace Alicium2
 						MConsole.WriteLine("You haven't selected any accounts.");
 					}
 				}
-				else if (e.Control && e.KeyCode == Keys.C)
+				else if (e.Control && e.KeyCode == Keys.D)
 				{
 					IsCommandMode = true;
 					PostText.Text = @"Command Mode
@@ -285,7 +292,7 @@ namespace Alicium2
 			}
 			else
 			{
-				if (e.Control && e.KeyCode == Keys.C)
+				if (e.Control && e.KeyCode == Keys.D)
 				{
 					IsCommandMode = false;
 					PostText.ReadOnly = false;
@@ -294,6 +301,15 @@ namespace Alicium2
 					PostText.Text = "";
 				}
 			}
+		}
+		
+		void ActiveStatusViewColumnClick(object sender, ColumnClickEventArgs e)
+		{
+			ActiveStatus = null;
+			ShowActiveStatus();
+			Command = "";
+			PostText.Text = "";
+			MConsole.WriteLine("Ready");
 		}
 		private void PostText_KeyPress(object sender, KeyPressEventArgs e)
 		{
@@ -600,6 +616,11 @@ else if (PostText.Text == "/" || PostText.Text == "/")
 			{
 				MConsole.WriteLine("You haven't selected any accounts.");
 			}
+		}
+		
+		void ActiveStatusViewSelectedIndexChanged(object sender, EventArgs e)
+		{
+			try{new TweetViewer(ActiveStatus).Show();}catch{}
 		}
 	}
 }

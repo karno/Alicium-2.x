@@ -362,14 +362,13 @@ namespace Alicium2
             }
             else
             {
-                var save = "Settings/" + this.Text[0] + ".bmp";
+                var save = Application.StartupPath + "/Settings/" + this.Text[0] + ".bmp";
                 //try
                 {
-                    /*using (var str = new FileStream(save, FileMode.OpenOrCreate, FileAccess.Write))
+                    using (var str = new FileStream(save, FileMode.OpenOrCreate, FileAccess.Write))
                     {
                         back.Save(str, ImageFormat.Png);
-                    }*/
-                    back.Save(save);
+                    }
                 }
                 //catch { } // 握りつぶす
                 return new ColumnData() { AccountName = TwitterAccount.VerifyCredentials(ts.Tokens).ResponseObject.ScreenName, Tille = this.Text, Track = _Track, Follow = _Follow, ColumnType = st, Image = "Settings/" + this.Text[0] + ".bmp" };

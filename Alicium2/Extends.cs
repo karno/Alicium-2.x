@@ -6,6 +6,8 @@ using System.Drawing;
 using Twitterizer;
 using System.IO;
 using RcLibCs;
+using System.Net;
+using System.Web;
 
 namespace Alicium2
 {
@@ -15,6 +17,16 @@ namespace Alicium2
 		public TwitterDo(Main _m)
 		{
 			m = _m;
+		}
+		public static Image GetImageFromUri(string uri)
+		{
+			using(WebClient wc = new WebClient())
+			{
+				using(Stream stream = wc.OpenRead(uri))
+				{
+					return new Bitmap(stream);
+				}
+			}
 		}
 		public void Post(string Tweet)
 		{
@@ -252,9 +264,9 @@ namespace Alicium2
 		{
 			int load = 0;
 			var l = new List<Column>();
-			while (File.Exists("Settings/Columns_" + load + ".dat"))
+			while (File.Exists(Application.StartupPath + "/Settings/Columns_" + load + ".dat"))
 			{
-				var data = (ColumnData)Rc.LoadFromXML<ColumnData>("Settings/Columns_" + load + ".dat");
+				var data = (ColumnData)Rc.LoadFromXML<ColumnData>(Application.StartupPath + "/Settings/Columns_" + load + ".dat");
 				var add = data.ToColumn(main);
 				if(add != null)
 				{
@@ -262,30 +274,35 @@ namespace Alicium2
 				}
 				load++;
 			}
+			while(File.Exists(Application.StartupPath + "/Settings/" + load + ".bmp"))
+			{
+				File.Delete(Application.StartupPath + "/Settings/" + load + ".bmp");
+				load++;
+			}
 			return l.ToArray();
 		}
 		public static bool Save(Column[] f)
 		{
-			try
+			//try
 			{
 				int load = 0;
-				while (File.Exists("Settings/Columns_" + load + ".dat"))
+				while (File.Exists(Application.StartupPath + "/Settings/Columns_" + load + ".dat"))
 				{
-					File.Delete("Settings/Columns_" + load + ".dat");
+					File.Delete(Application.StartupPath + "/Settings/Columns_" + load + ".dat");
 					load++;
 				}
 				for (int i = 0; i < f.Length; i++)
 				{
-					Rc.SaveToXML<ColumnData>(f[i].ToColumnData(), "Settings/Columns_" + i + ".dat");
+					Rc.SaveToXML<ColumnData>(f[i].ToColumnData(), Application.StartupPath + "/Settings/Columns_" + i + ".dat");
 				}
 				MessageBox.Show("Success to save.");
 				return true;
-			}
+			}/*
 			catch
 			{
 				MessageBox.Show("Failed to save.");
 				return false;
-			}
+			}*/
 		}
 	}
 	public static class Mariari
