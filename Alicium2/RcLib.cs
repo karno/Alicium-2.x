@@ -59,7 +59,7 @@ namespace RcLibCs
         }
         public static string loadData(string name)
         {
-            using (var streamReader = new StreamReader(name, Encoding.UTF8))
+            using (var streamReader = new StreamReader(name, Encoding.Unicode))
             {
                 string result = streamReader.ReadToEnd();
                 return result;
@@ -67,7 +67,7 @@ namespace RcLibCs
         }
         public static void saveData(string bunsyou, string name)
         {
-            using (var streamWriter = new StreamWriter(File.Create(name), Encoding.UTF8))
+            using (var streamWriter = new StreamWriter(File.Create(name), Encoding.Unicode))
             {
                 streamWriter.Write(bunsyou);
             }

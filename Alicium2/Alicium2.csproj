@@ -112,6 +112,12 @@
     <Compile Include="AccountManager.Designer.cs">
       <DependentUpon>AccountManager.cs</DependentUpon>
     </Compile>
+    <Compile Include="KichiManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="KichiManager.Designer.cs">
+      <DependentUpon>KichiManager.cs</DependentUpon>
+    </Compile>
     <Compile Include="MariariConsole.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -159,11 +165,23 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ScriptWriter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ScriptWriter.Designer.cs">
+      <DependentUpon>ScriptWriter.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sprash.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Sprash.designer.cs">
       <DependentUpon>Sprash.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TweetViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TweetViewer.Designer.cs">
+      <DependentUpon>TweetViewer.cs</DependentUpon>
     </Compile>
     <Compile Include="UserView.cs">
       <SubType>Form</SubType>
@@ -185,6 +203,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="hoge.resx">
       <DependentUpon>hoge.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="KichiManager.resx">
+      <DependentUpon>KichiManager.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
@@ -208,8 +229,14 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="ScriptWriter.resx">
+      <DependentUpon>ScriptWriter.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sprash.resx">
       <DependentUpon>Sprash.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TweetViewer.resx">
+      <DependentUpon>TweetViewer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserView.resx">
       <DependentUpon>UserView.cs</DependentUpon>

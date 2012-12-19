@@ -26,7 +26,7 @@ namespace Alicium2
 				                                                                     }));
 			}
 		}
-		int version = 1100;
+		int version = 1110;
 		TwitterDo twitterDo;
 		public static List<Column> Columns = new List<Column>();
 		public static Column ActiveColumn;
@@ -39,12 +39,14 @@ namespace Alicium2
 
 		public Main()
 		{
+            TestCode();
 			using (var sp = new Sprash())
 			{
 				sp.Show();
 				InitializeComponent();
 				if (version < CheckLatestVersion())
 				{
+					sp.Close();
 					MessageBox.Show("There is an update.");
 					System.Diagnostics.Process.Start("https://github.com/a1cn/Alicium-2.x/downloads");
 				}
@@ -55,8 +57,9 @@ namespace Alicium2
 				}
 				else
 				{
+					sp.Close();
 					MessageBox.Show("Accounts not found.Let's authenticate your first account.");
-					AccountManager m = new AccountManager(Accounts);
+					var m = new AccountManager(Accounts);
 					m.ShowDialog();
 					if (m.Change)
 					{
@@ -86,23 +89,51 @@ namespace Alicium2
 					Columns.Add(f[i]);
 				}
 				twitterDo = new TwitterDo(this);
-				sp.Close();
+				try
+				{
+					sp.Close();
+				}
+				catch{}
 			}
 		}
+        private void TestCode()
+        {
+            string code = @"
+using System;
+namespace hoge{
+class piyo{
+static void Main(){
+int i = Script.Args.Input;
+i = i * 2;
+Script.Args.Return(i);
+Console.WriteLine(i);
+Console.ReadLine();
+}}}
+";
+            int Input = 42;
+            Arg a = new Arg();
+            a.SetArgValue(Input,"Input");
+            var re = new Action<object>((i) => { MessageBox.Show(i.ToString()); });
+            Script.Run("test", code, re,a);
+        }
 		public int CheckLatestVersion()
 		{
 			try
 			{
-				WebClient webClient = new WebClient();
-				Stream stream = webClient.OpenRead("http://cannotdebug.blog.fc2.com/blog-entry-9.html");
-				Encoding encoding = Encoding.GetEncoding("UTF-8");
-				StreamReader streamReader = new StreamReader(stream, encoding);
-				string text = streamReader.ReadToEnd();
-				streamReader.Close();
-				stream.Close();
-				int num = text.IndexOf("最新バージョンは[", 0);
-				string text2 = text.Substring(num + 9, 7);
-				return int.Parse(text2.Replace(".", ""));
+				using(WebClient webClient = new WebClient())
+				{
+					using(Stream stream = webClient.OpenRead("http://cannotdebug.blog.fc2.com/blog-entry-9.html"))
+					{
+						Encoding encoding = Encoding.GetEncoding("UTF-8");
+						using(StreamReader streamReader = new StreamReader(stream, encoding))
+						{
+							string text = streamReader.ReadToEnd();;
+							int num = text.IndexOf("最新バージョンは[", 0);
+							string text2 = text.Substring(num + 9, 7);
+							return int.Parse(text2.Replace(".", ""));
+						}
+					}
+				}
 			}
 			catch
 			{
@@ -160,8 +191,13 @@ namespace Alicium2
 				}
 				else
 				{
+					if(Columns[i].Text[0] != i.ToString()[0])
+					{
+						Columns[i].Text = Columns[i].Text.Remove(0, 3);
+						Columns[i].Text = i + ": " + Columns[i].Text;
+					}
 					Columns[i].Location = new Point((Columns == null || Columns[0] == null ? 360 : Columns[0].Size.Width) * i, Columns[i].Fresh ? 0 : 27);
-					Columns[i].Size = new Size(Columns == null || Columns[0] == null ? 360 : Columns[0].Size.Width, this.Size.Height - 190);
+					Columns[i].Size = new Size(Columns == null || Columns[0] == null ? 360 : Columns[0].Size.Width, this.Size.Height - 187);
 					if (ActiveColumn == null || ActiveColumn != Columns[i]) Columns[i].Active = false;
 				}
 			}
@@ -193,7 +229,7 @@ namespace Alicium2
 		private void Main_FormClosed(object sender, FormClosedEventArgs e)
 		{
 			bool b = ColumnReader.Save(Columns.ToArray());
-			bool c = AccountReader.Save(Accounts, "Settings/Accounts.dat");
+			bool c = AccountReader.Save(Accounts, Application.StartupPath + "/Settings/Accounts.dat");
 			if(!b||!c)
 			{
 				MessageBox.Show("Failed to save your data.");
@@ -266,7 +302,7 @@ namespace Alicium2
 						MConsole.WriteLine("You haven't selected any accounts.");
 					}
 				}
-				else if (e.Control && e.KeyCode == Keys.C)
+				else if (e.Control && e.KeyCode == Keys.D)
 				{
 					IsCommandMode = true;
 					PostText.Text = @"Command Mode
@@ -285,7 +321,7 @@ namespace Alicium2
 			}
 			else
 			{
-				if (e.Control && e.KeyCode == Keys.C)
+				if (e.Control && e.KeyCode == Keys.D)
 				{
 					IsCommandMode = false;
 					PostText.ReadOnly = false;
@@ -294,6 +330,15 @@ namespace Alicium2
 					PostText.Text = "";
 				}
 			}
+		}
+		
+		void ActiveStatusViewColumnClick(object sender, ColumnClickEventArgs e)
+		{
+			ActiveStatus = null;
+			ShowActiveStatus();
+			Command = "";
+			PostText.Text = "";
+			MConsole.WriteLine("Ready");
 		}
 		private void PostText_KeyPress(object sender, KeyPressEventArgs e)
 		{
@@ -601,5 +646,15 @@ else if (PostText.Text == "/" || PostText.Text == "/")
 				MConsole.WriteLine("You haven't selected any accounts.");
 			}
 		}
+		
+		void ActiveStatusViewSelectedIndexChanged(object sender, EventArgs e)
+		{
+			try{new TweetViewer(ActiveStatus).Show();}catch{}
+		}
+
+        private void editToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new ScriptWriter(this).Show();
+        }
 	}
 }
